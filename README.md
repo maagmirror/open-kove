@@ -2,7 +2,11 @@
 
 Android Auto en el tablero de motos Kove con pantalla Carbit/EasyConn (modelo `21318`), para dueños que se quedaron sin una app que funcione. No hace falta root ni PC.
 
-> **Estado:** en prueba, en una sola moto con un POCO F8 Pro (Android 16, Android Auto 17.9). La moto tiene que estar en **Connection → WiFi Connection** al conectar; si no, conecta pero no muestra imagen. Mirá [el estado técnico](docs/08-KOVE-PROJECTION.md).
+![Android Auto con Google Maps en el tablero de una moto Kove](docs/media/kove-android-auto-tablero.jpg)
+
+![Android Auto con Waze en el tablero de una Kove 450R Naked](docs/media/kove-450r-naked-android-auto.png)
+
+> **Estado:** en prueba, en dos motos: una con un POCO F8 Pro (Android 16, Android Auto 17.9) y una Kove 450R Naked. La moto tiene que estar en **Connection → WiFi Connection** al conectar; si no, conecta pero no muestra imagen. Mirá [el estado técnico](docs/08-KOVE-PROJECTION.md).
 
 ## Qué hace
 

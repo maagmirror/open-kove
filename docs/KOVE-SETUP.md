@@ -1,7 +1,7 @@
 # Open Kove: instalación desde cero
 
 Muestra Android Auto en el tablero de motos Kove con pantalla Carbit/EasyConn (modelo `21318`).
-Probado en una moto con un POCO F8 Pro, Android 16 y Android Auto 17.9.
+Probado en dos motos: una con un POCO F8 Pro, Android 16 y Android Auto 17.9, y una Kove 450R Naked.
 
 ## Una sola vez
 

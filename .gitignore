@@ -61,3 +61,4 @@ docs/**/*discord-ops*
 agent-tools/
 **/mcp.json
 
+/context/
