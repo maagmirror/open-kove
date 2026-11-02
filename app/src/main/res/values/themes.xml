@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- A dark "cockpit" theme with a CFMoto-orange accent. Dark is intentional: this runs on a
+         bike in daylight/handlebar context and mirrors a commercial head-unit look. -->
+    <style name="Base.Theme.OpenCfMoto" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/brand_orange</item>
+        <item name="colorOnPrimary">@color/on_brand</item>
+        <item name="colorPrimaryContainer">@color/brand_orange_dark</item>
+        <item name="colorOnPrimaryContainer">@color/on_brand</item>
+
+        <item name="colorSecondaryContainer">@color/surface_high</item>
+        <item name="colorOnSecondaryContainer">@color/text_primary</item>
+
+        <item name="android:colorBackground">@color/bg</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorSurfaceVariant">@color/surface_high</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary</item>
+        <item name="colorOutline">@color/outline</item>
+
+        <item name="android:statusBarColor">@color/bg</item>
+        <item name="android:navigationBarColor">@color/bg</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <style name="Theme.OpenCfMoto" parent="Base.Theme.OpenCfMoto" />
+
+    <!-- Primary CTA: tall, rounded, confident. Height grows with font scale. -->
+    <style name="Widget.OpenCfMoto.Button.Connect" parent="Widget.Material3.Button">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">@dimen/btn_connect_min_height</item>
+        <item name="android:textSize">@dimen/btn_connect_text</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.01</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="cornerRadius">14dp</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">@dimen/btn_icon_padding</item>
+    </style>
+
+    <!-- Secondary actions: tonal. Icon beside text (not above) so labels stay horizontal. -->
+    <style name="Widget.OpenCfMoto.Button.Tonal" parent="Widget.Material3.Button.TonalButton">
+        <item name="cornerRadius">12dp</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="strokeColor">@color/outline</item>
+        <item name="backgroundTint">@color/surface</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="iconTint">@color/brand_orange</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">@dimen/btn_tonal_min_height</item>
+        <item name="android:textSize">@dimen/btn_tonal_text</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">@dimen/btn_icon_padding</item>
+        <item name="iconSize">20dp</item>
+    </style>
+
+    <!-- Icon-above tile (Scan / Map / Mirror). Uses auto-size so labels never go vertical. -->
+    <style name="Widget.OpenCfMoto.Button.Tile" parent="Widget.OpenCfMoto.Button.Tonal">
+        <item name="android:minHeight">@dimen/btn_tile_min_height</item>
+        <item name="android:textSize">@dimen/btn_tile_text</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="iconGravity">textTop</item>
+        <item name="iconPadding">@dimen/btn_tile_icon_padding</item>
+        <item name="autoSizeTextType">uniform</item>
+        <item name="autoSizeMinTextSize">@dimen/btn_tile_text_min</item>
+        <item name="autoSizeMaxTextSize">@dimen/btn_tile_text</item>
+        <item name="autoSizeStepGranularity">1sp</item>
+    </style>
+
+    <!-- Text/ghost actions for the log toolbar. -->
+    <style name="Widget.OpenCfMoto.Button.Text" parent="Widget.Material3.Button.TextButton">
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconTint">@color/text_secondary</item>
+        <item name="iconPadding">6dp</item>
+        <item name="iconSize">18dp</item>
+    </style>
+
+    <!-- Segmented-control option (selection highlight is applied in code). -->
+    <style name="Widget.OpenCfMoto.Segment" parent="Widget.Material3.Button.TonalButton">
+        <item name="cornerRadius">12dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/btn_segment_text</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:minHeight">@dimen/btn_segment_min_height</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="Card.OpenCfMoto" parent="Widget.Material3.CardView.Outlined">
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">0dp</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="strokeColor">@color/surface_high</item>
+        <item name="cardBackgroundColor">@color/surface</item>
+        <item name="contentPadding">16dp</item>
+    </style>
+
+    <style name="Card.OpenCfMoto.Log" parent="Card.OpenCfMoto">
+        <item name="cardCornerRadius">16dp</item>
+        <item name="contentPadding">10dp</item>
+    </style>
+
+    <!-- Trip computer stat tiles. -->
+    <style name="TripStatLabel">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:letterSpacing">0.06</item>
+    </style>
+
+    <style name="TripStatValue">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+</resources>

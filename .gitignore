@@ -1,0 +1,63 @@
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# Bike-test captures are diagnostic artifacts, not source — keep them out of the repo.
+# (The key findings from earlier captures are summarised in docs/05-DEBUG-KNOWLEDGE.md.)
+logs/
+
+# The built APK is distributed via GitHub Releases (not committed — keeps the repo small).
+*.apk
+
+# Scratch copies of upstream fork sources used while porting.
+.port-src/
+
+# Local working notes only — fork scans, WIP research. Never ship to main.
+docs/work/
+investigation-notes.md
+
+# Phone pulls / ad-hoc encodes — not source.
+.tmp_phone/
+
+# Ad-hoc phone/debug screencaps left in the repo root during development.
+_*.png
+_*.jpg
+_*.jpeg
+shot*.png
+shot*.jpg
+shot*.jpeg
+motoplay_shot.png
+
+
+# Draft release notes live on GitHub Releases only.
+release-notes-*.md
+.kotlin/
+
+# Private / proprietary local tooling — never publish.
+# Entire tools/ tree (Discord MCP, onboarding bots, corpus dumps, scripts).
+/tools/
+tools/
+
+# Discord ops / MCP setup notes (local only).
+docs/DISCORD-MCP-SETUP.md
+docs/**/*DISCORD*
+docs/**/*discord-mcp*
+docs/**/*discord-ops*
+
+# Cursor / agent local scratch that must not ship.
+.cursor/
+agent-tools/
+**/mcp.json
+

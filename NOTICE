@@ -1,0 +1,118 @@
+Open Kove
+=========
+
+Copyright (C) 2026 Maag <https://whoismaag.dev> for the Open Kove changes.
+
+Open Kove is a modified version of OpenCfMoto, changed in 2026 for Kove bikes with
+a Carbit/EasyConn dash. It is distributed under the same AGPL-3.0-or-later license,
+and every notice below still applies. Kove is a trademark of its owner. Open Kove
+is not affiliated with, endorsed by, or sponsored by it.
+
+OpenCfMoto
+==========
+
+Copyright (C) 2026 Alexandru <https://alexandru.rocks> and the OpenCfMoto contributors.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your option) any
+later version. See the LICENSE file for the full text.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+
+--------------------------------------------------------------------------------
+Why AGPL-3.0
+--------------------------------------------------------------------------------
+
+OpenCfMoto's Android Auto receiver is derived from AGPLv3-licensed code (see
+"Incorporated code" below). Under the terms of that license, the combined work
+must be distributed under the AGPL-3.0. Anyone who redistributes OpenCfMoto (or
+runs a modified version as a network-accessible service) must make the complete
+corresponding source available under the same license and preserve the
+copyright and attribution notices in this file.
+
+--------------------------------------------------------------------------------
+Copyright holders
+--------------------------------------------------------------------------------
+
+Copyright is held by the respective authors of each contribution:
+
+  * OpenCfMoto original code (UI, connection orchestration, bike Wi-Fi handling,
+    reconnect/park/resume supervisor, trip computer & logging, compositor glue,
+    documentation): Copyright (C) 2026 Alexandru <https://alexandru.rocks> and
+    the OpenCfMoto contributors.
+
+  * Android Auto Projection receiver (the `dev.zanderp.opencfmoto.aa` package):
+    portions Copyright (C) their original authors, ported from headunit-revived
+    (see below). These files retain their original AGPLv3 attribution headers.
+
+Holding copyright on your own contributions does not grant OpenCfMoto the right
+to relicense the incorporated AGPLv3 code under any other terms.
+
+--------------------------------------------------------------------------------
+Incorporated code (bundled in this repository)
+--------------------------------------------------------------------------------
+
+headunit-revived — AGPL-3.0
+  The `dev.zanderp.opencfmoto.aa` package (AAP transport, SSL handshake, message
+  handling, video decoder, protobuf message definitions, and related helpers) is
+  ported and adapted from the headunit-revived project.
+  Original work Copyright (C) the headunit lineage authors — including the
+  original "headunit" (mikereidis), "headunit-reloaded", and "headunit-revived"
+  (andreknieriem) — and their respective contributors. Licensed under AGPL-3.0.
+  Upstream: https://github.com/andreknieriem/headunit-revived
+
+--------------------------------------------------------------------------------
+Project lineage (prior open-cfmoto forks studied / built upon)
+--------------------------------------------------------------------------------
+
+OpenCfMoto builds on research and code from the following open-cfmoto forks. At
+the time of writing these repositories did not ship an explicit LICENSE file;
+this project treats the shared AGPLv3 heritage of the Android Auto code as
+governing and credits the prior authors here:
+
+  * coletz / dcoletto  — dcoletto/open-cfmoto  (base app, QR/EasyConn work)
+  * richardbizik        — richardbizik/open-cfmoto  (1000MT-X support)
+  * BojanJ              — BojanJ/open-cfmoto  (Android Auto receiver integration)
+  * ionutradu252        — ionutradu252/open-cfmoto  (CFDL16/450SR handlebar-button
+                          control, on-screen D-pad/knob, navigate-to, Assistant mic)
+
+--------------------------------------------------------------------------------
+Third-party dependencies (fetched at build time, not vendored)
+--------------------------------------------------------------------------------
+
+  * AndroidX libraries (core-ktx, appcompat, activity-ktx, constraintlayout,
+    camera-x, test) ....................................... Apache License 2.0
+  * Material Components for Android ....................... Apache License 2.0
+  * osmdroid (trip history map) ......................... Apache License 2.0
+  * MapLibre Native Android (Map / GPX dash) ............ BSD-2-Clause
+  * jmDNS (mDNS/NSD) ..................................... Apache License 2.0
+  * Conscrypt (TLS provider) ............................. Apache License 2.0
+  * Google ML Kit — Barcode Scanning .................... Google APIs Terms of Service
+  * Protocol Buffers (protobuf-java) .................... BSD-3-Clause
+  * JUnit / Espresso (tests only) ....................... EPL-1.0 / Apache 2.0
+  * FreeReflection bootstrap (weishu) ................... MIT
+
+The FreeReflection bootstrap is shipped as a prebuilt asset,
+`app/src/main/assets/freereflection_bootstrap.dex`, containing only
+`me.weishu.reflection.BootstrapClass`. It lifts Android's non-SDK interface
+restrictions for this process so the Wi‑Fi Direct group can be given the network
+name the dash's own client uses. Upstream: https://github.com/tiann/FreeReflection
+Copyright (c) weishu, MIT License.
+
+OpenStreetMap data used for Map / GPX (and via OpenFreeMap / OSRM / Overpass /
+Nominatim / Valhalla when online) is © OpenStreetMap contributors, available under the
+Open Database License (ODbL). OpenFreeMap styles/tiles: see openfreemap.org terms.
+Valhalla routing (avoid highways/tolls fallback): public instance at
+valhalla1.openstreetmap.de — please be polite with request volume.
+
+--------------------------------------------------------------------------------
+Trademarks
+--------------------------------------------------------------------------------
+
+CFMOTO, MotoPlay, EasyConn, Carbit, Android, Android Auto, Google, and Google
+Maps are trademarks of their respective owners. OpenCfMoto is an independent,
+unofficial project and is not affiliated with, endorsed by, or sponsored by any
+of them. These names are used only to describe interoperability.

@@ -1,0 +1,119 @@
+[
+  {
+    "model": "cfmoto-1000mt-x",
+    "file": "036_cw_1000MTX_EU_1529210699279106059.jpg",
+    "out": "01.jpg",
+    "author": "jiri_71427",
+    "jump": "https://discord.com/channels/1527320290726514748/1528828089453248682/1529210699279106059",
+    "channel": "cw/1000MTX EU",
+    "content": ""
+  },
+  {
+    "model": "cfmoto-450mt",
+    "file": "015_cw_main__1528487479731290172.jpg",
+    "out": "01.jpg",
+    "author": "t4n3lr",
+    "jump": "https://discord.com/channels/1527320290726514748/1527379932894724096/1528487479731290172",
+    "channel": "cw (main)",
+    "content": "2025 450MT works just fine with auto settings!"
+  },
+  {
+    "model": "cfmoto-675nk",
+    "file": "043_cw_675NK_1529395203398435016.jpg",
+    "out": "01.jpg",
+    "author": "misterio333",
+    "jump": "https://discord.com/channels/1527320290726514748/1527690604748865546/1529395203398435016",
+    "channel": "cw/675NK",
+    "content": ""
+  },
+  {
+    "model": "cfmoto-700mt-adv",
+    "file": "042_cw_700MT_ADV_1528824430263013396.jpg",
+    "out": "01.jpg",
+    "author": "deathredshot",
+    "jump": "https://discord.com/channels/1527320290726514748/1527721681148449049/1528824430263013396",
+    "channel": "cw/700MT ADV",
+    "content": ""
+  },
+  {
+    "model": "cfmoto-800mt-explore",
+    "file": "020_cw_main__1528081790240034969.png",
+    "out": "01.png",
+    "author": "gaetan_95",
+    "jump": "https://discord.com/channels/1527320290726514748/1527379932894724096/1528081790240034969",
+    "channel": "cw (main)",
+    "content": "On my 800mt explore.. very congrats, this project is awesome and it solves a bunch of problems... Morover, it seems to be nearly more stable than Motoplay itself! I'll test it more and in motion!!"
+  },
+  {
+    "model": "cfmoto-800mt-x",
+    "file": "021_cw_main__1528068414021570620.jpg",
+    "out": "01.jpg",
+    "author": "joyfulyak",
+    "jump": "https://discord.com/channels/1527320290726514748/1527379932894724096/1528068414021570620",
+    "channel": "cw (main)",
+    "content": "Confirmed working on 800mtx europe"
+  },
+  {
+    "model": "cfmoto-800nk",
+    "file": "013_cw_main__1528729677714292878.jpg",
+    "out": "01.jpg",
+    "author": "maxcalavera",
+    "jump": "https://discord.com/channels/1527320290726514748/1527379932894724096/1528729677714292878",
+    "channel": "cw (main)",
+    "content": "Done. 800nk advanced Portugal."
+  },
+  {
+    "model": "cfmoto-150sc",
+    "file": "023_cw_main__1528003624456945664.jpg",
+    "out": "01.jpg",
+    "author": "farhandgreat1730",
+    "jump": "https://discord.com/channels/1527320290726514748/1527379932894724096/1528003624456945664",
+    "channel": "cw (main)",
+    "content": "Thanks, its working. My bike is CFmoto 150SC"
+  },
+  {
+    "model": "voge-ds800-rally",
+    "file": "002_cw_main__1531686776836718682.jpg",
+    "out": "01.jpg",
+    "author": "800rall_03186",
+    "jump": "https://discord.com/channels/1527320290726514748/1527379932894724096/1531686776836718682",
+    "channel": "cw (main)",
+    "content": ""
+  },
+  {
+    "model": "morini-xcape-649",
+    "file": "003_cw_main__1531610695571996754.jpg",
+    "out": "01.jpg",
+    "author": "levi2m",
+    "jump": "https://discord.com/channels/1527320290726514748/1527379932894724096/1531610695571996754",
+    "channel": "cw (main)",
+    "content": "confirmed on Morini Xcape 649 26\"\n\nhad to do a lot of testing, but it worked!\n\nonly issue for now is that using the buttons it does not allow me to go back (button back brings me back to the bike dashboard) nor i can really navigate through"
+  },
+  {
+    "model": "morini-xcape-700",
+    "file": "052_welcome_main__1531496537165795461.png",
+    "out": "01.png",
+    "author": "tutoscaldera",
+    "jump": "https://discord.com/channels/1527320290726514748/1527320291808772328/1531496537165795461",
+    "channel": "welcome (main)",
+    "content": "Hello, It's works on MotoMorini Xcape 650 and Xcape 700"
+  },
+  {
+    "model": "morini-seiemmezzo",
+    "file": "123_cw_Seiemmezzo__1532008153976275055.png",
+    "out": "01.png",
+    "author": "fedecom20044461",
+    "jump": "https://discord.com/channels/1527320290726514748/1527379932894724096/1532008153976275055",
+    "channel": "cw (main)",
+    "content": "Hi! Confirmed works in  Moto Morini Seiemmezzo. Thanks!"
+  },
+  {
+    "model": "morbidelli-t1002",
+    "file": "001_cw_main__1531791368819576962.jpg",
+    "out": "01.jpg",
+    "author": "tutoscaldera",
+    "jump": "https://discord.com/channels/1527320290726514748/1527379932894724096/1531791368819576962",
+    "channel": "cw (main)",
+    "content": "A friend of mine tested it on a Morbidelli T1002V, and it works fine"
+  }
+]

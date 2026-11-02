@@ -1,0 +1,1024 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- OpenCfMoto Map dash — Google/Waze-like chrome: search pill, nav card, Go sheet. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/gpx_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#101418">
+
+    <FrameLayout
+        android:id="@+id/gpx_map_host"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Idle: Google-style search pill (top padding applied in code for cutout) -->
+    <LinearLayout
+        android:id="@+id/gpx_search_pill"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_gravity="top|start"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_search_pill"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="4dp"
+        android:paddingEnd="14dp">
+
+        <TextView
+            android:id="@+id/gpx_pill_close"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:gravity="center"
+            android:text="←"
+            android:textColor="#3C4043"
+            android:textSize="22sp" />
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:contentDescription="@string/gpx_search"
+            android:src="@drawable/ic_search"
+            android:tint="#5F6368" />
+
+        <TextView
+            android:id="@+id/gpx_search_pill_text"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@string/dash_search_here"
+            android:textColor="#3C4043"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/gpx_pill_circuit"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:gravity="center"
+            android:paddingHorizontal="8dp"
+            android:text="@string/gpx_circuit"
+            android:textColor="#E65100"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/gpx_pill_hub"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:gravity="center"
+            android:paddingHorizontal="10dp"
+            android:text="@string/hud_hub"
+            android:textColor="#1A73E8"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Navigating (PORTRAIT): Waze-style full-width top banner — big turn + distance + road.
+         Landscape sizes/margins are applied at runtime (HudViewActivity keeps configChanges). -->
+    <LinearLayout
+        android:id="@+id/gpx_hud"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
+        android:background="@drawable/bg_nav_top_edge"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingVertical="12dp"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/gpx_maneuver_row"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/gpx_cue_icon"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:contentDescription="@string/dash_next_maneuver"
+                android:src="@drawable/ic_man_straight" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/gpx_cue_dist"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:textColor="#FFFFFF"
+                    android:textSize="32sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/gpx_cue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxEms="16"
+                    android:maxLines="2"
+                    android:textColor="#8AB4F8"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/gpx_lane"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:letterSpacing="0.12"
+                    android:textColor="#FFB74D"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Kept for code refs; folded into the maneuver card above. -->
+        <TextView
+            android:id="@+id/gpx_title"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/gpx_next"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <!-- Navigating: compact data card, bottom-left. Left-anchored + wrap_content so the
+         right-side FAB column keeps its own lane and nothing overlaps. -->
+    <!-- Navigating: data card (PORTRAIT) — full width, evenly-weighted metrics + End on its own
+         row so five stats never overflow a narrow phone. Landscape/bike variant is in layout-land/. -->
+    <LinearLayout
+        android:id="@+id/gpx_hud_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="0dp"
+        android:background="@drawable/bg_nav_bottom_edge"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingHorizontal="12dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:visibility="gone">
+
+        <!-- Metrics only — End sits on its own row so "12.3 km" never squeezes the columns. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <!-- Speed/limit kept for code refs; shown on the floating gauge instead. -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+                <TextView
+                    android:id="@+id/gpx_l_speed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="km/h"
+                    android:textColor="#889098"
+                    android:textSize="12sp" />
+                <TextView
+                    android:id="@+id/gpx_w_speed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="—"
+                    android:textColor="#FFFFFF"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:includeFontPadding="false"
+                    android:text="@string/dash_time"
+                    android:textColor="#889098"
+                    android:textSize="11sp" />
+                <TextView
+                    android:id="@+id/gpx_w_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:gravity="center_horizontal"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:text="—"
+                    android:textColor="#FFFFFF"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:includeFontPadding="false"
+                    android:text="@string/dash_arrive"
+                    android:textColor="#889098"
+                    android:textSize="11sp" />
+                <TextView
+                    android:id="@+id/gpx_w_eta"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:gravity="center_horizontal"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:text="—"
+                    android:textColor="#FFFFFF"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1.2"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:includeFontPadding="false"
+                    android:text="@string/dash_left"
+                    android:textColor="#889098"
+                    android:textSize="11sp" />
+                <TextView
+                    android:id="@+id/gpx_w_left"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:gravity="center_horizontal"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:text="—"
+                    android:textColor="#FFFFFF"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/gpx_l_alt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:includeFontPadding="false"
+                    android:text="@string/dash_alt_m"
+                    android:textColor="#889098"
+                    android:textSize="11sp" />
+                <TextView
+                    android:id="@+id/gpx_w_alt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:gravity="center_horizontal"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:text="—"
+                    android:textColor="#FFFFFF"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+                <TextView
+                    android:id="@+id/gpx_l_limit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dash_limit"
+                    android:textColor="#889098"
+                    android:textSize="12sp" />
+                <TextView
+                    android:id="@+id/gpx_w_limit"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="2dp"
+                    android:background="@drawable/bg_speed_limit_sign_sm"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="—"
+                    android:textColor="#111111"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/gpx_status"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="#C8D0D8"
+                android:textSize="13sp" />
+
+            <Button
+                android:id="@+id/gpx_end_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_end_pill"
+                android:minWidth="0dp"
+                android:paddingHorizontal="16dp"
+                android:text="@string/dash_end"
+                android:textAllCaps="false"
+                android:textColor="#FF8A80"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Speedometer + EU limit (horizontal). Landscape repositions left of the FAB lane. -->
+    <LinearLayout
+        android:id="@+id/gpx_speed_chip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:layout_margin="12dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:background="@drawable/bg_speed_gauge"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/gpx_chip_speed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:text="—"
+                android:textColor="#FFFFFF"
+                android:textSize="36sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/gpx_chip_speed_unit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:text="km/h"
+                android:textColor="#B0B8C0"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/gpx_chip_limit"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginStart="12dp"
+            android:background="@drawable/bg_speed_limit_sign"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="—"
+            android:textColor="#111111"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <!-- Route preview card (PORTRAIT): full-width bottom sheet; buttons on their own row so
+         nothing clips on a narrow phone. The landscape/bike variant lives in layout-land/. -->
+    <LinearLayout
+        android:id="@+id/gpx_preview_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/bg_nav_card"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="12dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/gpx_preview_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="#FFFFFF"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/gpx_preview_meta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="#B0B8C0"
+            android:textSize="13sp" />
+
+        <!-- Route option chips (fastest first). Populated at runtime; shown only with a choice. -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/gpx_preview_alts"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone" />
+        </HorizontalScrollView>
+
+        <LinearLayout
+            android:id="@+id/gpx_preview_actions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/gpx_preview_save"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:paddingHorizontal="12dp"
+                android:text="@string/dash_save"
+                android:textColor="#90CAF9"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/gpx_preview_home"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:paddingHorizontal="12dp"
+                android:text="@string/controls_home"
+                android:textColor="#FFD54F"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/gpx_preview_marker"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:paddingHorizontal="12dp"
+                android:text="@string/dash_marker"
+                android:textColor="#A5D6A7"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/gpx_preview_circuit"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:paddingHorizontal="12dp"
+                android:text="@string/gpx_circuit"
+                android:textColor="#FFB74D"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/gpx_preview_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:paddingHorizontal="12dp"
+                android:text="@string/about_done"
+                android:textColor="#B0B8C0"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/gpx_preview_go"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:layout_marginStart="4dp"
+                android:background="@drawable/bg_go_button"
+                android:minWidth="110dp"
+                android:paddingHorizontal="20dp"
+                android:text="@string/main_go"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Shown when a route ends — mark parking / find parking / done. -->
+    <LinearLayout
+        android:id="@+id/gpx_arrive_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/bg_nav_card"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="14dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/gpx_arrive_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/dash_you_ve_arrived"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/gpx_arrive_meta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="@string/dash_mark_this_spot_or_keep_riding"
+            android:textColor="#B0B8C0"
+            android:textSize="13sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/gpx_arrive_park"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/bg_go_button"
+                android:text="@string/dash_park_here"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold" 
+                    android:minHeight="48dp"/>
+
+            <Button
+                android:id="@+id/gpx_arrive_find"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_route_chip"
+                android:text="@string/dash_find_parking"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold" 
+                    android:minHeight="48dp"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/gpx_arrive_done"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/transparent"
+            android:text="@string/dash_done_free_ride"
+            android:textAllCaps="false"
+            android:textColor="#B0B8C0" />
+    </LinearLayout>
+
+    <!-- Map FABs (below dimmer/menu/search in z-order). Vertically centred so the stack
+         never clips off the bottom of short, wide bike panels. -->
+    <LinearLayout
+        android:id="@+id/gpx_quick_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|center_vertical"
+        android:layout_marginEnd="8dp"
+        android:orientation="vertical">
+
+        <ImageButton
+            android:id="@+id/gpx_btn_recenter"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:background="@drawable/bg_fab_circle"
+            android:contentDescription="@string/dash_recenter_gps"
+            android:padding="11dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_fab_gps" />
+
+        <ImageButton
+            android:id="@+id/gpx_btn_zoom_in"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_fab_circle"
+            android:contentDescription="@string/dash_zoom_in"
+            android:padding="11dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_fab_plus" />
+
+        <ImageButton
+            android:id="@+id/gpx_btn_zoom_out"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_fab_circle"
+            android:contentDescription="@string/dash_zoom_out"
+            android:padding="11dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_fab_minus" />
+
+        <ImageButton
+            android:id="@+id/gpx_btn_north"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_fab_circle"
+            android:contentDescription="@string/dash_compass"
+            android:padding="11dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_fab_compass" />
+
+        <ImageButton
+            android:id="@+id/gpx_open_menu"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_fab_circle"
+            android:contentDescription="@string/dash_menu"
+            android:padding="11dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_fab_menu" />
+
+        <!-- Kept in-tree for click handlers; surfaced via the menu sheet to keep the
+             FAB stack short enough for any panel height. -->
+        <ImageButton
+            android:id="@+id/gpx_btn_overview"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_fab_circle"
+            android:contentDescription="@string/dash_fit_route"
+            android:padding="11dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_fab_fit"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:id="@+id/gpx_btn_mute"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:background="@drawable/bg_fab_circle"
+            android:contentDescription="@string/controls_voice"
+            android:padding="11dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_fab_voice"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <!-- Dimmer -->
+    <View
+        android:id="@+id/gpx_dimmer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#66000000"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone" />
+
+    <!-- Google-like search sheet (top). Top padding for punch-hole applied in adaptChromeLayout. -->
+    <LinearLayout
+        android:id="@+id/gpx_search_panel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#F8FFFFFF"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="10dp">
+
+            <TextView
+                android:id="@+id/gpx_search_close"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:gravity="center"
+                android:text="←"
+                android:textColor="#3C4043"
+                android:textSize="24sp" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_search_pill"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="14dp"
+                android:paddingEnd="6dp">
+
+                <EditText
+                    android:id="@+id/gpx_search_input"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:ellipsize="end"
+                    android:hint="@string/dash_search_places_or_address"
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="#202124"
+                    android:textColorHint="#80868B"
+                    android:textSize="17sp" />
+
+                <ImageView
+                    android:id="@+id/gpx_search_go"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/gpx_search"
+                    android:padding="9dp"
+                    android:src="@drawable/ic_search"
+                    android:tint="#5F6368" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="8dp"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/gpx_search_chips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
+
+        <TextView
+            android:id="@+id/gpx_search_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="4dp"
+            android:textColor="#5F6368"
+            android:textSize="13sp" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipChildren="true"
+            android:clipToPadding="true">
+
+            <LinearLayout
+                android:id="@+id/gpx_search_results"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipChildren="true"
+                android:clipToPadding="true"
+                android:orientation="vertical"
+                android:paddingBottom="24dp" />
+        </ScrollView>
+    </LinearLayout>
+
+    <!-- Tools + settings sheet -->
+    <ScrollView
+        android:id="@+id/gpx_menu_panel"
+        android:layout_width="280dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:background="#F0141A20"
+        android:fillViewport="true"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="8dp"
+                android:text="@string/gpx_ride"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/gpx_end"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/dash_end_navigation"
+                android:textAllCaps="false" 
+                    android:minHeight="48dp"/>
+
+            <Button
+                android:id="@+id/gpx_park"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/dash_park_here"
+                android:textAllCaps="false" 
+                    android:minHeight="48dp"/>
+
+            <Button
+                android:id="@+id/gpx_go_home"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/dash_go_home"
+                android:textAllCaps="false" 
+                    android:minHeight="48dp"/>
+
+            <Button
+                android:id="@+id/gpx_set_home"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/gpx_set_home_here"
+                android:textAllCaps="false" 
+                    android:minHeight="48dp"/>
+
+            <Button
+                android:id="@+id/gpx_recalc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/dash_recenter_recalc"
+                android:textAllCaps="false" 
+                    android:minHeight="48dp"/>
+
+            <Button
+                android:id="@+id/gpx_record"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/dash_record_ride"
+                android:textAllCaps="false" 
+                    android:minHeight="48dp"/>
+
+            <Button
+                android:id="@+id/gpx_create_circuit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/gpx_circuit"
+                android:textAllCaps="false" 
+                    android:minHeight="48dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="14dp"
+                android:paddingBottom="8dp"
+                android:text="@string/gpx_map"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/gpx_follow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/dash_follow"
+                android:textAllCaps="false" 
+                    android:minHeight="48dp"/>
+
+            <Button
+                android:id="@+id/gpx_north"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/dash_heading_up"
+                android:textAllCaps="false" 
+                    android:minHeight="48dp"/>
+
+            <Button
+                android:id="@+id/gpx_mute"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/controls_voice"
+                android:textAllCaps="false" 
+                    android:minHeight="48dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/gpx_zoom_out"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/dash_str"
+                    android:textSize="18sp" 
+                    android:minHeight="48dp"/>
+
+                <Button
+                    android:id="@+id/gpx_zoom_in"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:layout_weight="1"
+                    android:text="@string/dash_str_2"
+                    android:textSize="18sp" 
+                    android:minHeight="48dp"/>
+            </LinearLayout>
+
+            <include layout="@layout/include_gpx_dash_settings" />
+
+            <Button
+                android:id="@+id/gpx_menu_close"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/dash_close"
+                android:textAllCaps="false" 
+                    android:minHeight="48dp"/>
+        </LinearLayout>
+    </ScrollView>
+</FrameLayout>
