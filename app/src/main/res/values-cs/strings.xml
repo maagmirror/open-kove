@@ -15,7 +15,7 @@
     <string name="supported_bikes_full">Nahá: 125 NK · 450 NK · 675 NK · 800 NK · 800 NK Advanced · 800 NK Sport · 800 NK (US CRCP)\nSport: 300SR · 450SR · 450SR‑S · 450SR TC · 500SR VOOM · 675SR · 675SR‑R\nTouring / Adv: 450 MT · 700 MT · 700 MT Dobrodružství · 800 MT‑X · 800 MT Prozkoumat · 800 MT Prozkoumat GT · 1000 MT‑X\nCruiser: 450CL-C · CL-C450\nSkútr: 150SC\nATV / SSV (TFT): CFORCE 800 · CFORCE 850 Touring · CFORCE 1000 · CFORCE 1000 Touring · GOES Terrox 1000 / Gladiator G3 1000\nJiné: U10 Pro (kde pomlčka nabízí QR)</string>
     <string name="supported_bikes_unlikely_title">Obvykle bez projekce QR</string>
     <string name="supported_bikes_unlikely">800MT Sport · 800MT Touring · Edice mistra světa 450SR · 700CL‑X (Dobrodružství / Dědictví / Sport) · PAPIO — pokud vaše jednotka přesto neukáže QR.</string>
-    <string name="supported_bikes_footer">Úplný seznam online: github.com/zanderp/open-cfmoto → docs/SUPPORTED-BIKES.md — nahlaste nová kola v Discordu.</string>
+    <string name="supported_bikes_footer">Úplný seznam online: github.com/maagmirror/open-kove → docs/SUPPORTED-BIKES.md — nahlaste nová kola v Discordu.</string>
     <string name="about_about">O</string>
     <string name="about_wireless_android_auto_for_carbit_easyconnect_das">Bezdrátové Android Auto pro pomlčky Carbit / EasyConnect (Kove MotoPlay a sourozenci).</string>
     <string name="about_community_support">Komunita a podpora</string>

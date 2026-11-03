@@ -52,7 +52,7 @@ Lo que revisan: licencia libre, sin trackers (ya no hay telemetría), permisos j
 
 4. **Crear la app en Play Console** con el nombre "Open Kove", categoría Mapas y navegación, gratis.
 5. **Subir el AAB** en Pruebas → Prueba cerrada, y después Producción.
-6. **Completar la ficha** con los textos de abajo, el ícono, y capturas de pantalla (mínimo dos del teléfono; las de `docs/screenshots` sirven si las actualizás con la UI nueva).
+6. **Completar la ficha** con los textos de abajo, el ícono, y capturas de pantalla (mínimo dos del teléfono, sacadas de la versión actual de la app).
 7. **Política de privacidad:** pegar `https://github.com/maagmirror/open-kove/blob/main/PRIVACY.md`.
 8. **Formulario Data Safety** con las respuestas de abajo.
 9. **Declaraciones de permisos**, cada una con un video corto subido a YouTube como no listado. Lista más abajo.

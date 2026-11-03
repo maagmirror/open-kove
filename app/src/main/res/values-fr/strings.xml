@@ -15,7 +15,7 @@
     <string name="supported_bikes_full">Nu : 125NK · 450NK · 675NK · 800NK · 800NK Advanced · 800NK Sport · 800NK (US CRCP)\nSport : 300SR · 450SR · 450SR‑S · 450SR TC · 500SR VOOM · 675SR · 675SR‑R\nTouring / Adv : 450MT · 700MT · 700MT Aventure · 800MT‑X · 800MT Explore · 800MT Explore GT · 1 000 MT‑X\nCroiseur : 450CL‑C · CL‑C450\nTrottinette : 150SC\nVTT / SSV (TFT) : CFORCE 800 · CFORCE 850 Touring · CFORCE 1000 · CFORCE 1000 Touring · GOES Terrox 1000 / Gladiator G3 1000\nAutre : U10 Pro (où le tableau de bord propose le QR)</string>
     <string name="supported_bikes_unlikely_title">Généralement pas de QR de projection</string>
     <string name="supported_bikes_unlikely">800MT Sport · 800MT Touring · 450SR World Champion Edition · 700CL‑X (Adventure / Heritage / Sport) · PAPIO — à moins que votre appareil n\'affiche quand même le QR.</string>
-    <string name="supported_bikes_footer">Liste complète en ligne : github.com/zanderp/open-cfmoto → docs/SUPPORTED-BIKES.md — signalez les nouveaux motos dans Discord.</string>
+    <string name="supported_bikes_footer">Liste complète en ligne : github.com/maagmirror/open-kove → docs/SUPPORTED-BIKES.md — signalez les nouveaux motos dans Discord.</string>
     <string name="about_about">À propos</string>
     <string name="about_wireless_android_auto_for_carbit_easyconnect_das">Android Auto sans fil pour les tableaux de bord Carbit / EasyConnect (Kove MotoPlay et frères et sœurs).</string>
     <string name="about_community_support">Communauté et soutien</string>

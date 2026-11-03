@@ -22,7 +22,6 @@ Community reports welcome in [Discord](https://discord.gg/xRt5yZy2U) so we can k
 | **Confirmed** | **CFMoto** · **Voge** · **Moto Morini** · **Morbidelli** · **GOES** / **Gladiator** (CFORCE rebadges) |
 | **Same Carbit / EasyConnect path — try Connect** | **Zontes** · **Benelli** · **QJ Motor** · **Longjia** · other TFT dashes with a pairing QR |
 
-**📸 Dash showcase:** **[SHOWCASE.md](SHOWCASE.md)** — curated Android Auto photos from the community
 (one hero shot per confirmed model). Add yours in Discord `#confirmed-working`.
 
 ---

@@ -15,7 +15,7 @@
     <string name="supported_bikes_full">Naakt: 125NK · 450NK · 675NK · 800NK · 800NK Advanced · 800NK Sport · 800NK (US CRCP)\nSport: 300SR · 450SR · 450SR‑S · 450SR TC · 500SR VOOM · 675SR · 675SR‑R\nTouring / Adv: 450MT · 700MT · 700MT Adventure · 800MT‑X · 800MT Explore · 800MT Explore GT · 1000 MT‑X\nKruiser: 450CL‑C · CL‑C450\nScooter: 150SC\nATV / SSV (TFT): CFORCE 800 · CFORCE 850 Touring · CFORCE 1000 · CFORCE 1000 Touring · GOES Terrox 1000 / Gladiator G3 1000\nAnders: U10 Pro (waar het dashboard de QR biedt)</string>
     <string name="supported_bikes_unlikely_title">Meestal geen projectie QR</string>
     <string name="supported_bikes_unlikely">800MT Sport · 800MT Touring · 450SR World Champion Edition · 700CL‑X (avontuur/erfgoed/sport) · PAPIO — tenzij uw apparaat de QR toch weergeeft.</string>
-    <string name="supported_bikes_footer">Volledige lijst online: github.com/zanderp/open-cfmoto → docs/SUPPORTED-BIKES.md - rapporteer nieuwe motoren in Discord.</string>
+    <string name="supported_bikes_footer">Volledige lijst online: github.com/maagmirror/open-kove → docs/SUPPORTED-BIKES.md - rapporteer nieuwe motoren in Discord.</string>
     <string name="about_about">Over</string>
     <string name="about_wireless_android_auto_for_carbit_easyconnect_das">Draadloos Android Auto voor Carbit / EasyConnect-streepjes (Kove MotoPlay en broers en zussen).</string>
     <string name="about_community_support">Gemeenschap en ondersteuning</string>
