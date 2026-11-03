@@ -1,9 +1,14 @@
 # Cambios
 
+## 1.1.2
+
+**Si tenés la 1.1.0 o la 1.1.1, desinstalala antes de instalar esta.** Esas dos versiones salieron firmadas con claves distintas por un error del proceso de compilación, y Android no deja actualizar encima. Desde esta versión la firma es siempre la misma, así que las próximas se instalan encima sin desinstalar.
+
+- Firma fija para todas las APKs de GitHub. La compilación falla si la firma no es la esperada.
+
 ## 1.1.1
 
 - La APK pasa de 98 MB a unos 24 MB: trae solo las librerías para teléfonos (ARM), va comprimida y es una compilación de release en vez de debug. La app funciona igual.
-- Se actualiza encima de la 1.1.0 sin desinstalar.
 - El enlace a la lista de motos compatibles apunta a este repositorio en todos los idiomas.
 
 ## 1.1.0

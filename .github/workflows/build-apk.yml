@@ -66,7 +66,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
 
       # Android refuses to update an app signed with a different key, and each runner would
-      # otherwise generate its own. Store a keystore in the DEBUG_KEYSTORE_BASE64 secret.
+      # otherwise generate its own. The keystore lives in the DEBUG_KEYSTORE_BASE64 secret.
       - name: Restore signing key
         env:
           DEBUG_KEYSTORE_BASE64: ${{ secrets.DEBUG_KEYSTORE_BASE64 }}
@@ -75,16 +75,32 @@ jobs:
             echo "::error::DEBUG_KEYSTORE_BASE64 is not set; refusing to build an APK that cannot update earlier builds."
             exit 1
           fi
-          mkdir -p ~/.android
-          echo "$DEBUG_KEYSTORE_BASE64" | base64 -d > ~/.android/debug.keystore
+          echo "$DEBUG_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/openkove.keystore"
+          echo "GITHUB_KEYSTORE_FILE=$RUNNER_TEMP/openkove.keystore" >> "$GITHUB_ENV"
 
       - name: Build
         run: |
           chmod +x gradlew
           ./gradlew assembleGithubRelease --no-daemon
 
+      # Every GitHub APK must carry this certificate, or installed copies cannot update.
+      - name: Check signing certificate
+        env:
+          EXPECTED_CERT_SHA256: ad097a2d6bdc8c4fe5dfe4bea2883238458e1e3c81af674b686941660ceeaa41
+        run: |
+          apksigner=$(ls "$ANDROID_HOME"/build-tools/*/apksigner | sort -V | tail -n1)
+          apk=app/build/outputs/apk/github/release/app-github-release.apk
+          got=$("$apksigner" verify --print-certs "$apk" | sed -nE 's/.*certificate SHA-256 digest: ([0-9a-f]+).*/\1/p' | head -n1)
+          if [ "$got" != "$EXPECTED_CERT_SHA256" ]; then
+            echo "::error::APK signed with $got, expected $EXPECTED_CERT_SHA256. Check the DEBUG_KEYSTORE_BASE64 secret."
+            exit 1
+          fi
+          echo "Signing certificate OK: $got"
+
       - name: Rename APK
-        run: cp app/build/outputs/apk/github/release/app-github-release.apk "${{ steps.ver.outputs.apk }}"
+        run: |
+          cp app/build/outputs/apk/github/release/app-github-release.apk "${{ steps.ver.outputs.apk }}"
+          rm -f "$RUNNER_TEMP/openkove.keystore"
 
       # Play bundle, only when the release key secrets exist. Never attached to the GitHub release.
       - name: Build Play bundle

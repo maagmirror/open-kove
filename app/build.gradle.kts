@@ -14,8 +14,8 @@ android {
         applicationId = "dev.whoismaag.openkove"
         minSdk = 29
         targetSdk = 36
-        versionCode = 38
-        versionName = "1.1.1"
+        versionCode = 39
+        versionName = "1.1.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -67,16 +67,31 @@ android {
         }
     }
 
-    // github: full app, distributed as APK from GitHub Releases. Its release build is signed with
-    // the same key as every earlier GitHub APK (the debug keystore CI restores from a secret), so
-    // installed copies keep updating. Only the play flavor uses the Play release key.
+    // Fixed key for the GitHub APKs. CI restores it from the DEBUG_KEYSTORE_BASE64 secret and points
+    // GITHUB_KEYSTORE_FILE at it; Gradle's own debug keystore location is not reliable on the runner.
+    // Locally, without the file, the default debug key is used.
+    val githubStoreFile = ((project.findProperty("githubKeystoreFile") as String?)
+        ?: System.getenv("GITHUB_KEYSTORE_FILE"))?.let { file(it) }?.takeIf { it.exists() }
+    val githubSigning = if (githubStoreFile != null) {
+        signingConfigs.create("github") {
+            storeFile = githubStoreFile
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    } else {
+        signingConfigs.getByName("debug")
+    }
+
+    // github: full app, distributed as APK from GitHub Releases, always signed with the key above
+    // so installed copies keep updating. Only the play flavor uses the Play release key.
     // play: same app without the accessibility service and the background-kill permission.
     flavorDimensions += "dist"
     productFlavors {
         create("github") {
             dimension = "dist"
             buildConfigField("boolean", "AUTO_SERVER_START", "true")
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = githubSigning
         }
         create("play") {
             dimension = "dist"
