@@ -18,6 +18,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.materialswitch.MaterialSwitch
 import dev.zanderp.opencfmoto.aa.AaServerStarterService
+import dev.zanderp.opencfmoto.aa.AccessibilityDisclosure
 
 /**
  * First-run checklist: Android Auto, permissions, automatic head unit server, then scan the bike.
@@ -68,12 +69,20 @@ class OnboardingActivity : AppCompatActivity() {
         autoSwitch.setOnCheckedChangeListener { _, on ->
             if (syncing) return@setOnCheckedChangeListener
             if (on == AaServerStarterService.isEnabled(this)) return@setOnCheckedChangeListener
-            awaitingAccessibility = on
-            openAccessibilitySettings(
-                if (on) getString(R.string.aa_starter_enable_hint) else getString(R.string.aa_starter_disable_hint),
-            )
+            if (!on) {
+                awaitingAccessibility = false
+                openAccessibilitySettings(getString(R.string.aa_starter_disable_hint))
+                return@setOnCheckedChangeListener
+            }
+            askThenOpenAccessibility()
         }
         autoBtn.setOnClickListener { runAndroidAutoSetup() }
+        if (!BuildConfig.AUTO_SERVER_START) {
+            autoSwitch.visibility = View.GONE
+            findViewById<TextView>(R.id.ob_auto_desc).setText(R.string.setup_manual_server_desc)
+            autoBtn.text = getString(R.string.setup_android_auto_settings)
+            autoBtn.setOnClickListener { SetupHelper.openAndroidAutoOrStore(this) }
+        }
 
         val xiaomi = Build.MANUFACTURER.lowercase().let { it.contains("xiaomi") || it.contains("poco") || it.contains("redmi") }
         findViewById<View>(R.id.ob_xiaomi_card).visibility = if (xiaomi) View.VISIBLE else View.GONE
@@ -113,15 +122,19 @@ class OnboardingActivity : AppCompatActivity() {
         permsBtn.text = getString(if (permsOk) R.string.setup_all_granted else R.string.setup_grant_permissions)
         permsBtn.isEnabled = !permsOk
 
-        val autoOk = AaServerStarterService.isEnabled(this)
-        autoTitle.text = tick(autoOk) + getString(R.string.onboarding_auto_title)
-        syncing = true
-        try {
-            if (autoSwitch.isChecked != autoOk) autoSwitch.isChecked = autoOk
-        } finally {
-            syncing = false
+        if (BuildConfig.AUTO_SERVER_START) {
+            val autoOk = AaServerStarterService.isEnabled(this)
+            autoTitle.text = tick(autoOk) + getString(R.string.onboarding_auto_title)
+            syncing = true
+            try {
+                if (autoSwitch.isChecked != autoOk) autoSwitch.isChecked = autoOk
+            } finally {
+                syncing = false
+            }
+            autoBtn.visibility = if (autoOk) View.VISIBLE else View.GONE
+        } else {
+            autoTitle.text = getString(R.string.setup_3_head_unit_mode_in_android_auto)
         }
-        autoBtn.visibility = if (autoOk) View.VISIBLE else View.GONE
 
         val bikeOk = BikeMemory.hasSaved(this)
         bikeTitle.text = tick(bikeOk) + getString(R.string.onboarding_bike_title)
@@ -136,13 +149,19 @@ class OnboardingActivity : AppCompatActivity() {
             return
         }
         if (!AaServerStarterService.isEnabled(this)) {
-            awaitingAccessibility = true
-            openAccessibilitySettings(getString(R.string.aa_starter_enable_hint))
+            askThenOpenAccessibility()
             return
         }
         AaServerStarterService.request()
         Toast.makeText(this, getString(R.string.aa_starter_running), Toast.LENGTH_LONG).show()
         SetupHelper.openAndroidAutoSettings(this)
+    }
+
+    private fun askThenOpenAccessibility() {
+        AccessibilityDisclosure.show(this) {
+            awaitingAccessibility = true
+            openAccessibilitySettings(getString(R.string.aa_starter_enable_hint))
+        }
     }
 
     private fun openAccessibilitySettings(hint: String) {
@@ -179,7 +198,7 @@ class OnboardingActivity : AppCompatActivity() {
             var n = 0
             if (!SetupHelper.isAndroidAutoInstalled(ctx)) n++
             if (!SetupHelper.permissionsGranted(ctx)) n++
-            if (!AaServerStarterService.isEnabled(ctx)) n++
+            if (BuildConfig.AUTO_SERVER_START && !AaServerStarterService.isEnabled(ctx)) n++
             if (!BikeMemory.hasSaved(ctx)) n++
             return n
         }

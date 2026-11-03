@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Play build: no accessibility automation and no background-kill of the vendor app. -->
+    <uses-permission
+        android:name="android.permission.KILL_BACKGROUND_PROCESSES"
+        tools:node="remove" />
+
+    <application>
+        <service
+            android:name=".aa.AaServerStarterService"
+            tools:node="remove" />
+    </application>
+
+</manifest>

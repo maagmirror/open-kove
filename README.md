@@ -25,15 +25,21 @@ Android Auto tiene que correr su **servidor de unidad principal**. Con **Iniciar
 
 Si tenés la app EasyRide instalada, cerrala antes: ocupa los mismos puertos.
 
+### Actualizaciones automáticas con Obtainium
+
+[Obtainium](https://github.com/ImranR98/Obtainium) instala y actualiza apps desde GitHub Releases. Abrilo, tocá **Agregar app**, pegá `https://github.com/maagmirror/open-kove` y listo. También podés buscar Open Kove en [IzzyOnDroid](https://apt.izzysoft.de/fdroid/) desde el cliente F-Droid, cuando esté aceptada ahí.
+
 ## Compilar
 
 Hace falta JDK 17 o más nuevo y el Android SDK.
 
 ```bash
-./gradlew assembleDebug
+./gradlew assembleGithubDebug
 ```
 
-La APK queda en `app/build/outputs/apk/debug/app-debug.apk`. El workflow [`build-apk.yml`](.github/workflows/build-apk.yml) la compila en GitHub y la publica en Releases.
+La APK queda en `app/build/outputs/apk/github/debug/app-github-debug.apk`. El workflow [`build-apk.yml`](.github/workflows/build-apk.yml) la compila en GitHub y la publica en Releases.
+
+Hay dos variantes: `github` (completa) y `play` (sin el servicio de accesibilidad ni el permiso para cerrar la app del fabricante, para cumplir las políticas de Google Play). `./gradlew bundlePlayRelease` genera el AAB para Play si hay una clave de firma; mirá [docs/PUBLICAR.md](docs/PUBLICAR.md).
 
 ## Documentación
 

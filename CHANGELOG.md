@@ -9,6 +9,8 @@ Esta versión cambia el nombre de paquete de la app. **Desinstalá la Open Kove 
 - Botón **Configurar Android Auto ahora** en el paso 3, para dejarlo listo antes de la primera conexión.
 - Pantalla de bienvenida con los cuatro pasos del primer uso (Android Auto, permisos, servidor automático, escanear la moto). La pantalla principal muestra qué falta hasta que todo esté listo. La Configuración completa queda para ajustes avanzados.
 - Las opciones de encendido y apagado son interruptores. Desaparece el texto cortado ("En") de la traducción.
+- Aviso dentro de la app antes de activar el servicio de accesibilidad, con lo que hace y lo que no.
+- Variante `play` sin servicio de accesibilidad ni permiso para cerrar otras apps, y firma de release opcional en el workflow.
 - Telemetría desactivada: no se manda nada al servidor de OpenCfMoto ni a ningún otro.
 - Buscar actualizaciones apunta a este repositorio.
 - Textos, créditos y política de privacidad propios de Open Kove.

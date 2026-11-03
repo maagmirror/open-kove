@@ -35,10 +35,41 @@ android {
         buildConfigField("String", "TELEMETRY_URL", "\"$telemetryUrl\"")
     }
 
+    // github: full app, distributed as APK from GitHub Releases.
+    // play: same app without the accessibility service and the background-kill permission.
+    flavorDimensions += "dist"
+    productFlavors {
+        create("github") {
+            dimension = "dist"
+            buildConfigField("boolean", "AUTO_SERVER_START", "true")
+        }
+        create("play") {
+            dimension = "dist"
+            buildConfigField("boolean", "AUTO_SERVER_START", "false")
+        }
+    }
+
+    // Release key from the environment (CI secrets) or gradle.properties; absent → unsigned release.
+    val releaseStore = (project.findProperty("releaseStoreFile") as String?)
+        ?: System.getenv("RELEASE_STORE_FILE")
+    val releaseStoreFile = releaseStore?.let { file(it) }?.takeIf { it.exists() }
+    if (releaseStoreFile != null) {
+        signingConfigs.create("release") {
+            storeFile = releaseStoreFile
+            storePassword = (project.findProperty("releaseStorePassword") as String?)
+                ?: System.getenv("RELEASE_STORE_PASSWORD")
+            keyAlias = (project.findProperty("releaseKeyAlias") as String?)
+                ?: System.getenv("RELEASE_KEY_ALIAS")
+            keyPassword = (project.findProperty("releaseKeyPassword") as String?)
+                ?: System.getenv("RELEASE_KEY_PASSWORD")
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            if (releaseStoreFile != null) signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {

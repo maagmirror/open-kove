@@ -717,7 +717,9 @@ class MainActivity : AppCompatActivity() {
         val lines = buildList {
             if (!SetupHelper.isAndroidAutoInstalled(this@MainActivity)) add(getString(R.string.onboarding_aa_title))
             if (!SetupHelper.permissionsGranted(this@MainActivity)) add(getString(R.string.onboarding_perms_title))
-            if (!dev.zanderp.opencfmoto.aa.AaServerStarterService.isEnabled(this@MainActivity)) {
+            if (BuildConfig.AUTO_SERVER_START &&
+                !dev.zanderp.opencfmoto.aa.AaServerStarterService.isEnabled(this@MainActivity)
+            ) {
                 add(getString(R.string.onboarding_auto_title))
             }
             if (!BikeMemory.hasSaved(this@MainActivity)) add(getString(R.string.onboarding_bike_title))
