@@ -366,7 +366,6 @@
     <string name="main_type_place">Escribe un lugar para buscar en el mapa.</string>
     <string name="main_searching_dash">Buscando \\&quot;%1$s\\&quot; en el tablero</string>
     <string name="main_sent_aa">Enviado \\&quot;%1$s\\&quot; a Android Auto</string>
-    <string name="main_checking_update">Buscando actualizaciones...</string>
     <string name="main_up_to_date">Estás actualizado (o desconectado)</string>
     <string name="main_crash_title">Recuperado tras un cierre inesperado</string>
     <string name="main_mirror_ready_title">Espejo listo</string>
@@ -454,5 +453,12 @@
     <string name="aa_disclosure_title">Servicio de accesibilidad</string>
     <string name="aa_disclosure_body">Open Kove usa la API de accesibilidad de Android para manejar una sola app: Android Auto. Cuando el servidor de unidad principal está apagado, abre los ajustes de Android Auto, activa sus opciones de desarrollador (diez toques en Versión) y toca Iniciar servidor de unidad principal. No lee nada de ninguna otra app, no recopila datos y no hace nada hasta que Open Kove necesita el servidor.\n\nEn la próxima pantalla, buscá Open Kove y activalo. Podés desactivarlo ahí cuando quieras.</string>
     <string name="aa_disclosure_accept">Entendido, continuar</string>
+    <string name="main_update_title">Hay una actualización: %1$s</string>
+    <string name="main_update_download">Descargar</string>
+    <string name="main_update_skip">Saltar esta versión</string>
+    <string name="main_update_later">Después</string>
+    <string name="main_update_available">v%1$s · nueva %2$s</string>
+    <string name="about_check_update">Buscar actualizaciones</string>
+    <string name="main_checking_update">Buscando actualizaciones…</string>
     <string name="setup_manual_server_desc">En Android Auto, tocá Versión diez veces, aceptá y después ⋮ → Iniciar servidor de unidad principal. Repetí el último paso después de cada reinicio.</string>
 </resources>

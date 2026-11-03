@@ -179,6 +179,14 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="@string/about_source_on_github" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_about_update"
+                    style="@style/Widget.OpenCfMoto.Segment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/about_check_update" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

@@ -37,6 +37,7 @@ class AboutActivity : AppCompatActivity() {
         findViewById<MaterialButton>(R.id.btn_about_github).setOnClickListener {
             openUrl(URL_GITHUB)
         }
+        findViewById<MaterialButton>(R.id.btn_about_update).setOnClickListener { UpdateUi.checkManual(this) }
         findViewById<MaterialButton>(R.id.btn_about_discord).setOnClickListener {
             openUrl(URL_DISCORD)
         }

@@ -12,5 +12,5 @@ Esta versión cambia el nombre de paquete de la app. **Desinstalá la Open Kove 
 - Aviso dentro de la app antes de activar el servicio de accesibilidad, con lo que hace y lo que no.
 - Variante `play` sin servicio de accesibilidad ni permiso para cerrar otras apps, y firma de release opcional en el workflow.
 - Telemetría desactivada: no se manda nada al servidor de OpenCfMoto ni a ningún otro.
-- Buscar actualizaciones apunta a este repositorio.
+- Aviso de actualización: una vez por día la app consulta las releases de este repositorio y, si hay una nueva, lo muestra al lado de la versión y ofrece descargarla. También hay un botón en Acerca de.
 - Textos, créditos y política de privacidad propios de Open Kove.
