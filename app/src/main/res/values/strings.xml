@@ -596,5 +596,11 @@
     <string name="aa_disclosure_title">Accessibility service</string>
     <string name="aa_disclosure_body">Open Kove uses Android\'s accessibility API to operate one app only: Android Auto. When the head unit server is off, it opens Android Auto\'s settings, enables its developer options (ten taps on Version) and taps Start head unit server. It reads nothing from any other app, collects no data and does nothing until Open Kove needs the server.\n\nOn the next screen, find Open Kove and turn it on. You can turn it off there at any time.</string>
     <string name="aa_disclosure_accept">Got it, continue</string>
+    <string name="main_update_title">Update %1$s available</string>
+    <string name="main_update_download">Download</string>
+    <string name="main_update_skip">Skip this version</string>
+    <string name="main_update_later">Later</string>
+    <string name="main_update_available">v%1$s · new %2$s</string>
+    <string name="about_check_update">Check for updates</string>
     <string name="setup_manual_server_desc">In Android Auto, tap Version ten times, accept, then tap ⋮ → Start head unit server. Repeat the last step after every reboot.</string>
 </resources>

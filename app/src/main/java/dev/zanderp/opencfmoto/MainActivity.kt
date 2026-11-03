@@ -13,7 +13,6 @@ import android.media.projection.MediaProjectionManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.text.method.LinkMovementMethod
 import android.text.method.ScrollingMovementMethod
 import android.view.View
 import android.widget.Button
@@ -508,6 +507,12 @@ class MainActivity : AppCompatActivity() {
         maybeShowCrashRecovery()
         // Soft dep check after auto-connect has had time to start — never race Connect.
         logView.postDelayed({ DependencyPrompt.showOnLaunchIfNeeded(this) }, 2500)
+        logView.postDelayed({
+            UpdateUi.checkAuto(this) { release ->
+                refreshUpdateBadge()
+                if (!ConnectionState.phase.busy && ConnectionState.phase != Phase.STREAMING) UpdateUi.show(this, release)
+            }
+        }, 4000)
         // Opening the home screen must not resume a killed NAV_TO (looks like "Arrived at X").
         val startingGpx = intent?.getBooleanExtra(EXTRA_START_GPX, false) == true
         val projecting = ConnectionState.phase == Phase.STREAMING ||
@@ -734,6 +739,7 @@ class MainActivity : AppCompatActivity() {
         refreshBikeLabel()
         renderStatus(ConnectionState.phase, ConnectionState.detail)
         refreshTodo()
+        refreshUpdateBadge()
         if (WifiGate.isWifiEnabled(this)) WifiGate.cancelNotification(this)
         // Retry auto-connect on resume: after finishing first-run setup, or once the bike's Wi-Fi
         // comes into range shortly after launch. Guarded so it only ever starts one attempt.
@@ -1620,37 +1626,21 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkUpdateManual() {
-        Toast.makeText(this, R.string.main_checking_update, Toast.LENGTH_SHORT).show()
-        Thread {
-            val release = UpdateChecker.check(this, manual = true)
-            runOnUiThread {
-                if (release == null) {
-                    Toast.makeText(this, R.string.main_up_to_date, Toast.LENGTH_SHORT).show()
-                } else {
-                    showUpdateDialog(release)
-                }
-            }
-        }.start()
-    }
+    private fun checkUpdateManual() = UpdateUi.checkManual(this)
 
-    private fun showUpdateDialog(release: UpdateChecker.Release) {
-        val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
-            .setTitle("Update ${release.version}")
-            .setMessage(ReleaseNotes.toSpanned(release.notes))
-            .setPositiveButton("Download") { _, _ ->
-                try {
-                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(release.downloadUrl)))
-                } catch (_: Exception) {
-                    Toast.makeText(this, R.string.main_download_failed, Toast.LENGTH_SHORT).show()
-                }
-            }
-            .setNegativeButton("Skip") { _, _ -> UpdateChecker.skip(this, release.version) }
-            .setNeutralButton("Later", null)
-            .show()
-        // Headings/bullets/bold come from [ReleaseNotes]; make markdown links tappable too.
-        dialog.findViewById<TextView>(android.R.id.message)?.movementMethod =
-            LinkMovementMethod.getInstance()
+    /** "v1.1.0" normally; "v1.1.0 · new v1.2.0" in brand color when a newer release is known. */
+    private fun refreshUpdateBadge() {
+        val label = findViewById<TextView>(R.id.brand_version)
+        val newer = UpdateChecker.available(this)
+        if (newer == null) {
+            label.text = "v${BuildConfig.VERSION_NAME}"
+            label.setTextColor(ContextCompat.getColor(this, R.color.text_secondary))
+            label.setOnClickListener { AboutActivity.start(this) }
+        } else {
+            label.text = getString(R.string.main_update_available, BuildConfig.VERSION_NAME, newer.version)
+            label.setTextColor(ContextCompat.getColor(this, R.color.brand_orange))
+            label.setOnClickListener { UpdateUi.show(this, newer) }
+        }
     }
 
     private fun reportProblem() {
