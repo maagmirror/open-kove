@@ -19,6 +19,11 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
+        // Phones only: x86/x86_64 are emulator-only and add ~38 MB of native libs to the APK.
+        ndk {
+            abiFilters += listOf("arm64-v8a", "armeabi-v7a")
+        }
+
         // Default OpenRouteService key used when the rider hasn't entered their own. Supply it via
         // `-PorsApiKey=...`, an `orsApiKey` in gradle.properties, or the ORS_API_KEY env var so the
         // key isn't hardcoded in source. Empty → routing falls back to the OSRM demo, then beeline.
