@@ -21,6 +21,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.materialswitch.MaterialSwitch
 import dev.zanderp.opencfmoto.aa.AaServerStarterService
+import dev.zanderp.opencfmoto.aa.AccessibilityDisclosure
 import java.io.File
 
 /**
@@ -110,12 +111,19 @@ class SetupActivity : AppCompatActivity() {
         step3AutoSwitch.setOnCheckedChangeListener { _, on ->
             if (syncingSwitches) return@setOnCheckedChangeListener
             if (on == AaServerStarterService.isEnabled(this)) return@setOnCheckedChangeListener
-            awaitingAccessibility = on
-            openAccessibilitySettings(
-                if (on) getString(R.string.aa_starter_enable_hint) else getString(R.string.aa_starter_disable_hint),
-            )
+            if (!on) {
+                awaitingAccessibility = false
+                openAccessibilitySettings(getString(R.string.aa_starter_disable_hint))
+                return@setOnCheckedChangeListener
+            }
+            askThenOpenAccessibility()
         }
         step3RunBtn.setOnClickListener { runAndroidAutoSetup() }
+        if (!BuildConfig.AUTO_SERVER_START) {
+            (step3AutoSwitch.parent as android.view.View).visibility = android.view.View.GONE
+            step3RunBtn.visibility = android.view.View.GONE
+            findViewById<TextView>(R.id.step3_auto_desc).setText(R.string.setup_manual_server_desc)
+        }
 
         findViewById<MaterialButton>(R.id.quality_smooth).setOnClickListener { setQuality(VideoQuality.SMOOTH) }
         findViewById<MaterialButton>(R.id.quality_balanced).setOnClickListener { setQuality(VideoQuality.BALANCED) }
@@ -495,6 +503,13 @@ class SetupActivity : AppCompatActivity() {
         }
     }
 
+    private fun askThenOpenAccessibility() {
+        AccessibilityDisclosure.show(this) {
+            awaitingAccessibility = true
+            openAccessibilitySettings(getString(R.string.aa_starter_enable_hint))
+        }
+    }
+
     private fun openAccessibilitySettings(hint: String) {
         try {
             startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
@@ -510,8 +525,7 @@ class SetupActivity : AppCompatActivity() {
             return
         }
         if (!AaServerStarterService.isEnabled(this)) {
-            awaitingAccessibility = true
-            openAccessibilitySettings(getString(R.string.aa_starter_enable_hint))
+            askThenOpenAccessibility()
             return
         }
         AaServerStarterService.request()
@@ -530,7 +544,8 @@ class SetupActivity : AppCompatActivity() {
         step2Btn.isEnabled = !permsOk
 
         val autoOk = AaServerStarterService.isEnabled(this)
-        step3Title.text = tick(autoOk) + " " + getString(R.string.setup_3_head_unit_mode_in_android_auto)
+        step3Title.text = (if (BuildConfig.AUTO_SERVER_START) tick(autoOk) + " " else "") +
+            getString(R.string.setup_3_head_unit_mode_in_android_auto)
         syncingSwitches = true
         try {
             if (step3AutoSwitch.isChecked != autoOk) step3AutoSwitch.isChecked = autoOk

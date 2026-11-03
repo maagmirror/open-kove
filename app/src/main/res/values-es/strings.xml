@@ -451,4 +451,8 @@
     <string name="onboarding_later">Hacerlo después</string>
     <string name="main_todo_title">Antes de la primera conexión</string>
     <string name="main_todo_btn">Completar configuración</string>
+    <string name="aa_disclosure_title">Servicio de accesibilidad</string>
+    <string name="aa_disclosure_body">Open Kove usa la API de accesibilidad de Android para manejar una sola app: Android Auto. Cuando el servidor de unidad principal está apagado, abre los ajustes de Android Auto, activa sus opciones de desarrollador (diez toques en Versión) y toca Iniciar servidor de unidad principal. No lee nada de ninguna otra app, no recopila datos y no hace nada hasta que Open Kove necesita el servidor.\n\nEn la próxima pantalla, buscá Open Kove y activalo. Podés desactivarlo ahí cuando quieras.</string>
+    <string name="aa_disclosure_accept">Entendido, continuar</string>
+    <string name="setup_manual_server_desc">En Android Auto, tocá Versión diez veces, aceptá y después ⋮ → Iniciar servidor de unidad principal. Repetí el último paso después de cada reinicio.</string>
 </resources>
