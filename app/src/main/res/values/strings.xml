@@ -578,4 +578,19 @@
     <string name="legacy_install_body">This phone still has an older Open Kove (or OpenCfMoto) with the previous package name. Both apps use the same ports, so the bike may connect to the wrong one. Uninstall the old one and keep this version.</string>
     <string name="legacy_install_uninstall">Uninstall old version</string>
     <string name="legacy_install_later">Later</string>
+    <string name="onboarding_title">Welcome to Open Kove</string>
+    <string name="onboarding_subtitle">Three things to set up once. After that, opening the app connects to the bike by itself.</string>
+    <string name="onboarding_aa_title">1. Android Auto</string>
+    <string name="onboarding_aa_desc">Android Auto runs Maps and Waze. Open Kove sends its screen to the bike. It has no icon of its own, so this button opens it.</string>
+    <string name="onboarding_perms_title">2. Permissions</string>
+    <string name="onboarding_auto_title">3. Start the server automatically</string>
+    <string name="onboarding_auto_desc">Android Auto must run its head unit server, which is hidden in its developer settings. Turn this on and Open Kove takes care of it, also after every reboot. The service can only see Android Auto.</string>
+    <string name="onboarding_xiaomi_title">Xiaomi, Redmi and POCO</string>
+    <string name="onboarding_xiaomi_desc">In Open Kove\'s app settings, turn on Autostart and set battery to No restrictions, or the connection drops when the screen locks.</string>
+    <string name="onboarding_bike_title">4. Your bike</string>
+    <string name="onboarding_bike_desc">Turn the bike on, go to Connection → WiFi Connection and scan the QR on the dash. You only do this once.</string>
+    <string name="onboarding_scan_now">Scan the bike QR</string>
+    <string name="onboarding_later">Do it later</string>
+    <string name="main_todo_title">Before the first connection</string>
+    <string name="main_todo_btn">Finish setup</string>
 </resources>

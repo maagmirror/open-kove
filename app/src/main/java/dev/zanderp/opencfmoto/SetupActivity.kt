@@ -595,24 +595,7 @@ class SetupActivity : AppCompatActivity() {
         }
     }
 
-    private fun openAndroidAuto() {
-        if (SetupHelper.isAndroidAutoInstalled(this)) {
-            openAndroidAutoSettings()
-            return
-        }
-        val market = Intent(Intent.ACTION_VIEW,
-            Uri.parse("market://details?id=${SetupHelper.GEARHEAD_PACKAGE}"))
-        try {
-            startActivity(market)
-        } catch (_: Exception) {
-            try {
-                startActivity(Intent(Intent.ACTION_VIEW,
-                    Uri.parse("https://play.google.com/store/apps/details?id=${SetupHelper.GEARHEAD_PACKAGE}")))
-            } catch (_: Exception) {
-                Toast.makeText(this, getString(R.string.setup_play_store_failed), Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
+    private fun openAndroidAuto() = SetupHelper.openAndroidAutoOrStore(this)
 
     /** Sections that only mattered for other bikes. Their views stay bound, just out of sight. */
     private fun hideCardsTitled(view: android.view.View, titles: Set<String>) {
@@ -633,20 +616,7 @@ class SetupActivity : AppCompatActivity() {
         return null
     }
 
-    private fun openAndroidAutoSettings() {
-        try {
-            startActivity(Intent("android.settings.ANDROID_AUTO_SETTINGS")
-                .setPackage(SetupHelper.GEARHEAD_PACKAGE))
-        } catch (_: Exception) {
-            try {
-                startActivity(Intent(Intent.ACTION_MAIN).setClassName(
-                    SetupHelper.GEARHEAD_PACKAGE,
-                    "com.google.android.projection.gearhead.companion.settings.DefaultSettingsActivity"))
-            } catch (_: Exception) {
-                Toast.makeText(this, getString(R.string.setup_android_auto_settings_failed), Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
+    private fun openAndroidAutoSettings() = SetupHelper.openAndroidAutoSettings(this)
 
     companion object {
         private const val REQ_PERMS = 42

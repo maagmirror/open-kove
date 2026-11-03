@@ -434,4 +434,21 @@
     <string name="legacy_install_body">Este teléfono todavía tiene una Open Kove anterior (u OpenCfMoto) con el nombre de paquete viejo. Las dos usan los mismos puertos, así que la moto puede conectarse a la equivocada. Desinstalá la vieja y quedate con esta.</string>
     <string name="legacy_install_uninstall">Desinstalar la vieja</string>
     <string name="legacy_install_later">Después</string>
+    <string name="setup_open_android_auto">Abrir Android Auto</string>
+    <string name="setup_all_granted">Todos concedidos</string>
+    <string name="onboarding_title">Bienvenido a Open Kove</string>
+    <string name="onboarding_subtitle">Tres cosas para configurar una sola vez. Después, al abrir la app conecta sola con la moto.</string>
+    <string name="onboarding_aa_title">1. Android Auto</string>
+    <string name="onboarding_aa_desc">Android Auto corre Maps y Waze. Open Kove manda su pantalla a la moto. No tiene ícono propio, así que este botón lo abre.</string>
+    <string name="onboarding_perms_title">2. Permisos</string>
+    <string name="onboarding_auto_title">3. Iniciar el servidor automáticamente</string>
+    <string name="onboarding_auto_desc">Android Auto tiene que correr su servidor de unidad principal, que está escondido en sus opciones de desarrollador. Activá esto y Open Kove se encarga, también después de cada reinicio. El servicio solo puede ver Android Auto.</string>
+    <string name="onboarding_xiaomi_title">Xiaomi, Redmi y POCO</string>
+    <string name="onboarding_xiaomi_desc">En los ajustes de la app Open Kove, activá Inicio automático y poné la batería en Sin restricciones, o la conexión se corta al bloquear la pantalla.</string>
+    <string name="onboarding_bike_title">4. Tu moto</string>
+    <string name="onboarding_bike_desc">Prendé la moto, entrá a Connection → WiFi Connection y escaneá el QR del tablero. Esto se hace una sola vez.</string>
+    <string name="onboarding_scan_now">Escanear el QR de la moto</string>
+    <string name="onboarding_later">Hacerlo después</string>
+    <string name="main_todo_title">Antes de la primera conexión</string>
+    <string name="main_todo_btn">Completar configuración</string>
 </resources>
