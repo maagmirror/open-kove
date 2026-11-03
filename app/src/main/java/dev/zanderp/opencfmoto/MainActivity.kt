@@ -657,6 +657,7 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btn_share_log).setOnClickListener { shareLog() }
 
         findViewById<Button>(R.id.btn_setup).setOnClickListener { SetupActivity.start(this) }
+        findViewById<View>(R.id.btn_todo).setOnClickListener { OnboardingActivity.start(this) }
         findViewById<View>(R.id.brand_title).setOnClickListener { AboutActivity.start(this) }
         findViewById<View>(R.id.btn_about_page).setOnClickListener { AboutActivity.start(this) }
         findViewById<View>(R.id.btn_check_update).setOnClickListener { checkUpdateManual() }
@@ -679,7 +680,7 @@ class MainActivity : AppCompatActivity() {
         // First launch: walk the user through the one-time prerequisites.
         try {
             LegacyInstall.maybeWarn(this)
-            if (!SetupActivity.hasSeen(this)) SetupActivity.start(this)
+            if (!SetupActivity.hasSeen(this)) OnboardingActivity.start(this)
             else maybeAutoConnect()
             maybeResumeFromParked(intent)
         } catch (e: Exception) {
@@ -701,6 +702,27 @@ class MainActivity : AppCompatActivity() {
             intent.removeExtra(EXTRA_START_GPX)
             beginGpxProjection()
         }
+        if (intent.getBooleanExtra(EXTRA_START_SCAN, false)) {
+            intent.removeExtra(EXTRA_START_SCAN)
+            startAaScan()
+        }
+    }
+
+    /** Shows what is still missing for a first connection; hidden once everything is in place. */
+    private fun refreshTodo() {
+        val n = OnboardingActivity.missingSteps(this)
+        val panel = findViewById<View>(R.id.todo_panel)
+        panel.visibility = if (n == 0) View.GONE else View.VISIBLE
+        if (n == 0) return
+        val lines = buildList {
+            if (!SetupHelper.isAndroidAutoInstalled(this@MainActivity)) add(getString(R.string.onboarding_aa_title))
+            if (!SetupHelper.permissionsGranted(this@MainActivity)) add(getString(R.string.onboarding_perms_title))
+            if (!dev.zanderp.opencfmoto.aa.AaServerStarterService.isEnabled(this@MainActivity)) {
+                add(getString(R.string.onboarding_auto_title))
+            }
+            if (!BikeMemory.hasSaved(this@MainActivity)) add(getString(R.string.onboarding_bike_title))
+        }
+        findViewById<TextView>(R.id.todo_body).text = lines.joinToString(System.lineSeparator()) { "• $it" }
     }
 
     override fun onResume() {
@@ -709,6 +731,7 @@ class MainActivity : AppCompatActivity() {
         // the Connect button.
         refreshBikeLabel()
         renderStatus(ConnectionState.phase, ConnectionState.detail)
+        refreshTodo()
         if (WifiGate.isWifiEnabled(this)) WifiGate.cancelNotification(this)
         // Retry auto-connect on resume: after finishing first-run setup, or once the bike's Wi-Fi
         // comes into range shortly after launch. Guarded so it only ever starts one attempt.
@@ -1773,6 +1796,7 @@ class MainActivity : AppCompatActivity() {
          *  memory and avoids the ContentCapture TransactionTooLargeException on long sessions. */
         private const val LOG_VIEW_MAX_CHARS = 120_000
         const val EXTRA_START_GPX = "start_gpx"
+        const val EXTRA_START_SCAN = "start_scan"
         /** When set with [EXTRA_START_GPX], join the bike even if not already live. */
         const val EXTRA_GPX_TO_BIKE = "gpx_to_bike"
         /** Latched once an auto-connect attempt actually starts, so it fires only once per process. */
