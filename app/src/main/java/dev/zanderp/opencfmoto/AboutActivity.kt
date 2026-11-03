@@ -37,6 +37,7 @@ class AboutActivity : AppCompatActivity() {
         findViewById<MaterialButton>(R.id.btn_about_github).setOnClickListener {
             openUrl(URL_GITHUB)
         }
+        findViewById<MaterialButton>(R.id.btn_about_update).setOnClickListener { UpdateUi.checkManual(this) }
         findViewById<MaterialButton>(R.id.btn_about_discord).setOnClickListener {
             openUrl(URL_DISCORD)
         }
@@ -65,7 +66,7 @@ class AboutActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val URL_WEBSITE = "https://alexandru.rocks"
+        private const val URL_WEBSITE = "https://whoismaag.dev"
         private const val URL_MAAG = "https://whoismaag.dev"
         private const val URL_GITHUB = "https://github.com/maagmirror/open-kove"
         private const val URL_DISCORD = "https://discord.gg/xRt5yZy2U"

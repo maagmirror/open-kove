@@ -15,12 +15,13 @@ import java.net.URL
  */
 object UpdateChecker {
 
-    const val REPO = "zanderp/open-cfmoto"
+    const val REPO = "maagmirror/open-kove"
 
     private const val API = "https://api.github.com/repos/$REPO/releases/latest"
     private const val PREF = "updates"
     private const val KEY_LAST_CHECK = "lastCheckMs"
     private const val KEY_SKIPPED = "skippedVersion"
+    private const val KEY_LATEST = "latestJson"
     private const val CHECK_INTERVAL_MS = 24 * 60 * 60 * 1000L
 
     data class Release(
@@ -37,9 +38,29 @@ object UpdateChecker {
         if (!manual && !dueForCheck(context)) return null
         val release = fetch() ?: return null
         markChecked(context)
+        remember(context, release)
         if (!isNewer(release.version, BuildConfig.VERSION_NAME)) return null
         if (!manual && release.version == skipped(context)) return null
         return release
+    }
+
+    /** The newer release found by an earlier check, if the rider has not skipped it. */
+    fun available(context: Context): Release? {
+        val raw = prefs(context).getString(KEY_LATEST, null) ?: return null
+        val r = try {
+            val j = JSONObject(raw)
+            Release(j.optString("version"), j.optString("notes"), j.optString("apk").ifBlank { null }, j.optString("page"))
+        } catch (_: Exception) {
+            return null
+        }
+        if (!isNewer(r.version, BuildConfig.VERSION_NAME) || r.version == skipped(context)) return null
+        return r
+    }
+
+    private fun remember(context: Context, r: Release) {
+        val j = JSONObject().put("version", r.version).put("notes", r.notes.take(4000))
+            .put("apk", r.apkUrl ?: "").put("page", r.pageUrl)
+        prefs(context).edit().putString(KEY_LATEST, j.toString()).apply()
     }
 
     private fun fetch(): Release? = try {
@@ -47,7 +68,7 @@ object UpdateChecker {
             connectTimeout = 8000
             readTimeout = 8000
             setRequestProperty("Accept", "application/vnd.github+json")
-            setRequestProperty("User-Agent", "OpenCfMoto")
+            setRequestProperty("User-Agent", "OpenKove/${BuildConfig.VERSION_NAME}")
         }
         try {
             if (conn.responseCode != 200) null else {

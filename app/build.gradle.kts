@@ -11,11 +11,11 @@ android {
     }
 
     defaultConfig {
-        applicationId = "dev.zanderp.opencfmoto"
+        applicationId = "dev.whoismaag.openkove"
         minSdk = 29
         targetSdk = 36
-        versionCode = 36
-        versionName = "2.0.6"
+        versionCode = 37
+        versionName = "1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -31,14 +31,45 @@ android {
         // Override: -PtelemetryUrl=https://….workers.dev  or TELEMETRY_URL env / gradle.properties
         val telemetryUrl = (project.findProperty("telemetryUrl") as String?)
             ?: System.getenv("TELEMETRY_URL")
-            ?: "https://opencfmoto-telemetry.hello-3d9.workers.dev"
+            ?: ""
         buildConfigField("String", "TELEMETRY_URL", "\"$telemetryUrl\"")
+    }
+
+    // github: full app, distributed as APK from GitHub Releases.
+    // play: same app without the accessibility service and the background-kill permission.
+    flavorDimensions += "dist"
+    productFlavors {
+        create("github") {
+            dimension = "dist"
+            buildConfigField("boolean", "AUTO_SERVER_START", "true")
+        }
+        create("play") {
+            dimension = "dist"
+            buildConfigField("boolean", "AUTO_SERVER_START", "false")
+        }
+    }
+
+    // Release key from the environment (CI secrets) or gradle.properties; absent → unsigned release.
+    val releaseStore = (project.findProperty("releaseStoreFile") as String?)
+        ?: System.getenv("RELEASE_STORE_FILE")
+    val releaseStoreFile = releaseStore?.let { file(it) }?.takeIf { it.exists() }
+    if (releaseStoreFile != null) {
+        signingConfigs.create("release") {
+            storeFile = releaseStoreFile
+            storePassword = (project.findProperty("releaseStorePassword") as String?)
+                ?: System.getenv("RELEASE_STORE_PASSWORD")
+            keyAlias = (project.findProperty("releaseKeyAlias") as String?)
+                ?: System.getenv("RELEASE_KEY_ALIAS")
+            keyPassword = (project.findProperty("releaseKeyPassword") as String?)
+                ?: System.getenv("RELEASE_KEY_PASSWORD")
+        }
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            if (releaseStoreFile != null) signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {

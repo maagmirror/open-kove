@@ -13,7 +13,6 @@ import android.media.projection.MediaProjectionManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.text.method.LinkMovementMethod
 import android.text.method.ScrollingMovementMethod
 import android.view.View
 import android.widget.Button
@@ -68,7 +67,7 @@ class MainActivity : AppCompatActivity() {
             log(
                 "!! denied: ${denied.joinToString { it.substringAfterLast('.') }} — this dash can " +
                     "ONLY be reached over Bluetooth. If Android stopped asking, grant them in " +
-                    "Settings ▸ Apps ▸ OpenCfMoto ▸ Permissions, then tap Connect again.",
+                    "Settings ▸ Apps ▸ Open Kove ▸ Permissions, then tap Connect again.",
             )
             ConnectionState.set(Phase.ERROR, "Bluetooth/location permission denied")
             return@registerForActivityResult
@@ -351,7 +350,7 @@ class MainActivity : AppCompatActivity() {
             androidx.appcompat.app.AlertDialog.Builder(this)
                 .setTitle(R.string.main_crash_title)
                 .setMessage(
-                    "OpenCfMoto closed unexpectedly last time. The log and crash report were saved — " +
+                    "Open Kove closed unexpectedly last time. The log and crash report were saved — " +
                         "open Logs and tap Share Logs so we can see what happened.",
                 )
                 .setPositiveButton("Share Logs") { _, _ -> shareLog() }
@@ -394,7 +393,7 @@ class MainActivity : AppCompatActivity() {
                                     "Single app — that app must stay on screen; Android sends no frames " +
                                     "in the background. Prefer GPX / Tracks or Android Auto for pocket use.\n\n" +
                                     "Bike touch does not drive mirrored apps. Continue connects and " +
-                                    "sends OpenCfMoto to the background.",
+                                    "sends Open Kove to the background.",
                             )
                             .setPositiveButton("Continue") { _, _ -> startMirrorLink() }
                             .setCancelable(false)
@@ -508,6 +507,12 @@ class MainActivity : AppCompatActivity() {
         maybeShowCrashRecovery()
         // Soft dep check after auto-connect has had time to start — never race Connect.
         logView.postDelayed({ DependencyPrompt.showOnLaunchIfNeeded(this) }, 2500)
+        logView.postDelayed({
+            UpdateUi.checkAuto(this) { release ->
+                refreshUpdateBadge()
+                if (!ConnectionState.phase.busy && ConnectionState.phase != Phase.STREAMING) UpdateUi.show(this, release)
+            }
+        }, 4000)
         // Opening the home screen must not resume a killed NAV_TO (looks like "Arrived at X").
         val startingGpx = intent?.getBooleanExtra(EXTRA_START_GPX, false) == true
         val projecting = ConnectionState.phase == Phase.STREAMING ||
@@ -657,6 +662,7 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btn_share_log).setOnClickListener { shareLog() }
 
         findViewById<Button>(R.id.btn_setup).setOnClickListener { SetupActivity.start(this) }
+        findViewById<View>(R.id.btn_todo).setOnClickListener { OnboardingActivity.start(this) }
         findViewById<View>(R.id.brand_title).setOnClickListener { AboutActivity.start(this) }
         findViewById<View>(R.id.btn_about_page).setOnClickListener { AboutActivity.start(this) }
         findViewById<View>(R.id.btn_check_update).setOnClickListener { checkUpdateManual() }
@@ -678,7 +684,8 @@ class MainActivity : AppCompatActivity() {
 
         // First launch: walk the user through the one-time prerequisites.
         try {
-            if (!SetupActivity.hasSeen(this)) SetupActivity.start(this)
+            LegacyInstall.maybeWarn(this)
+            if (!SetupActivity.hasSeen(this)) OnboardingActivity.start(this)
             else maybeAutoConnect()
             maybeResumeFromParked(intent)
         } catch (e: Exception) {
@@ -700,6 +707,29 @@ class MainActivity : AppCompatActivity() {
             intent.removeExtra(EXTRA_START_GPX)
             beginGpxProjection()
         }
+        if (intent.getBooleanExtra(EXTRA_START_SCAN, false)) {
+            intent.removeExtra(EXTRA_START_SCAN)
+            startAaScan()
+        }
+    }
+
+    /** Shows what is still missing for a first connection; hidden once everything is in place. */
+    private fun refreshTodo() {
+        val n = OnboardingActivity.missingSteps(this)
+        val panel = findViewById<View>(R.id.todo_panel)
+        panel.visibility = if (n == 0) View.GONE else View.VISIBLE
+        if (n == 0) return
+        val lines = buildList {
+            if (!SetupHelper.isAndroidAutoInstalled(this@MainActivity)) add(getString(R.string.onboarding_aa_title))
+            if (!SetupHelper.permissionsGranted(this@MainActivity)) add(getString(R.string.onboarding_perms_title))
+            if (BuildConfig.AUTO_SERVER_START &&
+                !dev.zanderp.opencfmoto.aa.AaServerStarterService.isEnabled(this@MainActivity)
+            ) {
+                add(getString(R.string.onboarding_auto_title))
+            }
+            if (!BikeMemory.hasSaved(this@MainActivity)) add(getString(R.string.onboarding_bike_title))
+        }
+        findViewById<TextView>(R.id.todo_body).text = lines.joinToString(System.lineSeparator()) { "• $it" }
     }
 
     override fun onResume() {
@@ -708,6 +738,8 @@ class MainActivity : AppCompatActivity() {
         // the Connect button.
         refreshBikeLabel()
         renderStatus(ConnectionState.phase, ConnectionState.detail)
+        refreshTodo()
+        refreshUpdateBadge()
         if (WifiGate.isWifiEnabled(this)) WifiGate.cancelNotification(this)
         // Retry auto-connect on resume: after finishing first-run setup, or once the bike's Wi-Fi
         // comes into range shortly after launch. Guarded so it only ever starts one attempt.
@@ -1594,37 +1626,21 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkUpdateManual() {
-        Toast.makeText(this, R.string.main_checking_update, Toast.LENGTH_SHORT).show()
-        Thread {
-            val release = UpdateChecker.check(this, manual = true)
-            runOnUiThread {
-                if (release == null) {
-                    Toast.makeText(this, R.string.main_up_to_date, Toast.LENGTH_SHORT).show()
-                } else {
-                    showUpdateDialog(release)
-                }
-            }
-        }.start()
-    }
+    private fun checkUpdateManual() = UpdateUi.checkManual(this)
 
-    private fun showUpdateDialog(release: UpdateChecker.Release) {
-        val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
-            .setTitle("Update ${release.version}")
-            .setMessage(ReleaseNotes.toSpanned(release.notes))
-            .setPositiveButton("Download") { _, _ ->
-                try {
-                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(release.downloadUrl)))
-                } catch (_: Exception) {
-                    Toast.makeText(this, R.string.main_download_failed, Toast.LENGTH_SHORT).show()
-                }
-            }
-            .setNegativeButton("Skip") { _, _ -> UpdateChecker.skip(this, release.version) }
-            .setNeutralButton("Later", null)
-            .show()
-        // Headings/bullets/bold come from [ReleaseNotes]; make markdown links tappable too.
-        dialog.findViewById<TextView>(android.R.id.message)?.movementMethod =
-            LinkMovementMethod.getInstance()
+    /** "v1.1.0" normally; "v1.1.0 · new v1.2.0" in brand color when a newer release is known. */
+    private fun refreshUpdateBadge() {
+        val label = findViewById<TextView>(R.id.brand_version)
+        val newer = UpdateChecker.available(this)
+        if (newer == null) {
+            label.text = "v${BuildConfig.VERSION_NAME}"
+            label.setTextColor(ContextCompat.getColor(this, R.color.text_secondary))
+            label.setOnClickListener { AboutActivity.start(this) }
+        } else {
+            label.text = getString(R.string.main_update_available, BuildConfig.VERSION_NAME, newer.version)
+            label.setTextColor(ContextCompat.getColor(this, R.color.brand_orange))
+            label.setOnClickListener { UpdateUi.show(this, newer) }
+        }
     }
 
     private fun reportProblem() {
@@ -1772,6 +1788,7 @@ class MainActivity : AppCompatActivity() {
          *  memory and avoids the ContentCapture TransactionTooLargeException on long sessions. */
         private const val LOG_VIEW_MAX_CHARS = 120_000
         const val EXTRA_START_GPX = "start_gpx"
+        const val EXTRA_START_SCAN = "start_scan"
         /** When set with [EXTRA_START_GPX], join the bike even if not already live. */
         const val EXTRA_GPX_TO_BIKE = "gpx_to_bike"
         /** Latched once an auto-connect attempt actually starts, so it fires only once per process. */

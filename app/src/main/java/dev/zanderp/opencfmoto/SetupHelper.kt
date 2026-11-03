@@ -2,6 +2,9 @@ package dev.zanderp.opencfmoto
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.widget.Toast
 import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings
@@ -67,6 +70,42 @@ object SetupHelper {
      * Without it, resume falls back to a tap-to-resume notification.
      */
     fun canAutoResume(ctx: Context): Boolean = Settings.canDrawOverlays(ctx)
+
+    /** Android Auto settings when installed, otherwise its Play Store page. */
+    fun openAndroidAutoOrStore(ctx: Context) {
+        if (isAndroidAutoInstalled(ctx)) {
+            openAndroidAutoSettings(ctx)
+            return
+        }
+        try {
+            ctx.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$GEARHEAD_PACKAGE")))
+        } catch (_: Exception) {
+            try {
+                ctx.startActivity(
+                    Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$GEARHEAD_PACKAGE")),
+                )
+            } catch (_: Exception) {
+                Toast.makeText(ctx, ctx.getString(R.string.setup_play_store_failed), Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    fun openAndroidAutoSettings(ctx: Context) {
+        try {
+            ctx.startActivity(Intent("android.settings.ANDROID_AUTO_SETTINGS").setPackage(GEARHEAD_PACKAGE))
+        } catch (_: Exception) {
+            try {
+                ctx.startActivity(
+                    Intent(Intent.ACTION_MAIN).setClassName(
+                        GEARHEAD_PACKAGE,
+                        "com.google.android.projection.gearhead.companion.settings.DefaultSettingsActivity",
+                    ),
+                )
+            } catch (_: Exception) {
+                Toast.makeText(ctx, ctx.getString(R.string.setup_android_auto_settings_failed), Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     /** Everything we can verify is in place. Head-unit mode can't be verified, so it isn't gated. */
     fun coreReady(ctx: Context): Boolean =
