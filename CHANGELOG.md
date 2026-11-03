@@ -1,5 +1,10 @@
 # Cambios
 
+## 1.1.3
+
+- Arregla el error "Se produjo un problema al analizar el paquete" que impedía instalar la 1.1.1 y la 1.1.2 en algunos teléfonos. La APK vuelve a guardar el código y las librerías sin comprimir, así que pesa unos 55 MB.
+- Si tenés la 1.1.2, se instala encima sin desinstalar.
+
 ## 1.1.2
 
 **Si tenés la 1.1.0 o la 1.1.1, desinstalala antes de instalar esta.** Esas dos versiones salieron firmadas con claves distintas por un error del proceso de compilación, y Android no deja actualizar encima. Desde esta versión la firma es siempre la misma, así que las próximas se instalan encima sin desinstalar.

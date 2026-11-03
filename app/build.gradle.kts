@@ -14,8 +14,8 @@ android {
         applicationId = "dev.whoismaag.openkove"
         minSdk = 29
         targetSdk = 36
-        versionCode = 39
-        versionName = "1.1.2"
+        versionCode = 40
+        versionName = "1.1.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -23,6 +23,8 @@ android {
         ndk {
             abiFilters += listOf("arm64-v8a", "armeabi-v7a")
         }
+        // Do not compress dex or native libs (packaging { useLegacyPackaging = true }): it cut the
+        // APK to ~24 MB, but some phones refused it with "There was a problem parsing the package".
 
         // Default OpenRouteService key used when the rider hasn't entered their own. Supply it via
         // `-PorsApiKey=...`, an `orsApiKey` in gradle.properties, or the ORS_API_KEY env var so the
@@ -38,17 +40,6 @@ android {
             ?: System.getenv("TELEMETRY_URL")
             ?: ""
         buildConfigField("String", "TELEMETRY_URL", "\"$telemetryUrl\"")
-    }
-
-    // Compress dex and native libs inside the APK (~60 → ~25 MB download). Android extracts the
-    // libs at install time, so the installed size grows a bit; behaviour is unchanged.
-    packaging {
-        jniLibs {
-            useLegacyPackaging = true
-        }
-        dex {
-            useLegacyPackaging = true
-        }
     }
 
     // Release key from the environment (CI secrets) or gradle.properties; absent → unsigned release.
