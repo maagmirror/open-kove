@@ -19,6 +19,8 @@ import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.materialswitch.MaterialSwitch
+import dev.zanderp.opencfmoto.aa.AaServerStarterService
 import java.io.File
 
 /**
@@ -47,6 +49,12 @@ class SetupActivity : AppCompatActivity() {
     private lateinit var profileDesc: TextView
     private lateinit var btStatus: TextView
     private lateinit var resumeBtn: MaterialButton
+    private lateinit var step3Title: TextView
+    private lateinit var step3AutoSwitch: MaterialSwitch
+    private lateinit var step3RunBtn: MaterialButton
+
+    private var syncingSwitches = false
+    private var awaitingAccessibility = false
 
     private val importSettingsLauncher = registerForActivityResult(
         ActivityResultContracts.OpenDocument()
@@ -96,9 +104,18 @@ class SetupActivity : AppCompatActivity() {
         step2Btn.setOnClickListener { requestMissingPermissions() }
         findViewById<MaterialButton>(R.id.step2_settings_btn).setOnClickListener { openAppSettings() }
         findViewById<MaterialButton>(R.id.step3_btn).setOnClickListener { openAndroidAutoSettings() }
-        findViewById<MaterialButton>(R.id.step3_auto_btn).setOnClickListener {
-            startActivity(Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS))
+        step3Title = findViewById(R.id.step3_title)
+        step3AutoSwitch = findViewById(R.id.step3_auto_switch)
+        step3RunBtn = findViewById(R.id.step3_run_btn)
+        step3AutoSwitch.setOnCheckedChangeListener { _, on ->
+            if (syncingSwitches) return@setOnCheckedChangeListener
+            if (on == AaServerStarterService.isEnabled(this)) return@setOnCheckedChangeListener
+            awaitingAccessibility = on
+            openAccessibilitySettings(
+                if (on) getString(R.string.aa_starter_enable_hint) else getString(R.string.aa_starter_disable_hint),
+            )
         }
+        step3RunBtn.setOnClickListener { runAndroidAutoSetup() }
 
         findViewById<MaterialButton>(R.id.quality_smooth).setOnClickListener { setQuality(VideoQuality.SMOOTH) }
         findViewById<MaterialButton>(R.id.quality_balanced).setOnClickListener { setQuality(VideoQuality.BALANCED) }
@@ -124,21 +141,9 @@ class SetupActivity : AppCompatActivity() {
         findViewById<MaterialButton>(R.id.dbltap_very_slow).setOnClickListener {
             setDoubleTap(DoubleTapDelay.VERY_SLOW)
         }
-        findViewById<MaterialButton>(R.id.holds_on).setOnClickListener { setHoldsEnabled(true) }
-        findViewById<MaterialButton>(R.id.holds_off).setOnClickListener { setHoldsEnabled(false) }
         findViewById<MaterialButton>(R.id.hold_short).setOnClickListener { setLongPress(LongPressDelay.SHORT) }
         findViewById<MaterialButton>(R.id.hold_normal).setOnClickListener { setLongPress(LongPressDelay.NORMAL) }
         findViewById<MaterialButton>(R.id.hold_long).setOnClickListener { setLongPress(LongPressDelay.LONG) }
-        findViewById<MaterialButton>(R.id.autoconnect_on).setOnClickListener { setAutoConnect(true) }
-        findViewById<MaterialButton>(R.id.autoconnect_off).setOnClickListener { setAutoConnect(false) }
-        findViewById<MaterialButton>(R.id.recovery_on).setOnClickListener { setAutoRecovery(true) }
-        findViewById<MaterialButton>(R.id.recovery_off).setOnClickListener { setAutoRecovery(false) }
-        findViewById<MaterialButton>(R.id.logtrips_on).setOnClickListener { setLogTrips(true) }
-        findViewById<MaterialButton>(R.id.logtrips_off).setOnClickListener { setLogTrips(false) }
-        findViewById<MaterialButton>(R.id.nontouch_on).setOnClickListener { setForceNonTouch(true) }
-        findViewById<MaterialButton>(R.id.nontouch_off).setOnClickListener { setForceNonTouch(false) }
-        findViewById<MaterialButton>(R.id.forcetouch_on).setOnClickListener { setForceTouch(true) }
-        findViewById<MaterialButton>(R.id.forcetouch_off).setOnClickListener { setForceTouch(false) }
         findViewById<MaterialButton>(R.id.profile_auto).setOnClickListener { setProfileOverride(ProfileOverride.AUTO) }
         findViewById<MaterialButton>(R.id.profile_legacy).setOnClickListener { setProfileOverride(ProfileOverride.LEGACY) }
         findViewById<MaterialButton>(R.id.profile_nk800).setOnClickListener { setProfileOverride(ProfileOverride.NK800) }
@@ -154,15 +159,20 @@ class SetupActivity : AppCompatActivity() {
         findViewById<MaterialButton>(R.id.transport_existing).setOnClickListener {
             setTransport(WifiTransport.EXISTING)
         }
-        findViewById<MaterialButton>(R.id.secrets_on).setOnClickListener { setSecrets(true) }
-        findViewById<MaterialButton>(R.id.secrets_off).setOnClickListener { setSecrets(false) }
-        findViewById<MaterialButton>(R.id.telemetry_on).setOnClickListener { setTelemetry(true) }
-        findViewById<MaterialButton>(R.id.telemetry_off).setOnClickListener { setTelemetry(false) }
         findViewById<MaterialButton>(R.id.settings_share).setOnClickListener { shareSettingsJson() }
         findViewById<MaterialButton>(R.id.settings_import).setOnClickListener {
             importSettingsLauncher.launch(arrayOf("application/json", "text/*", "*/*"))
         }
         findViewById<MaterialButton>(R.id.bt_settings_btn).setOnClickListener { BluetoothHelper.openBluetoothSettings(this) }
+
+        bindSwitch(R.id.holds_switch, { ButtonTimingPrefs.holdsEnabled(this) }, ::setHoldsEnabled)
+        bindSwitch(R.id.autoconnect_switch, { AppSettings.autoConnect(this) }, ::setAutoConnect)
+        bindSwitch(R.id.recovery_switch, { AppSettings.autoRecovery(this) }, ::setAutoRecovery)
+        bindSwitch(R.id.logtrips_switch, { AppSettings.logTrips(this) }, ::setLogTrips)
+        bindSwitch(R.id.nontouch_switch, { AppSettings.forceNonTouch(this) }, ::setForceNonTouch)
+        bindSwitch(R.id.forcetouch_switch, { AppSettings.forceTouch(this) }, ::setForceTouch)
+        bindSwitch(R.id.secrets_switch, { AppSettings.includeSecretsInLogs(this) }, ::setSecrets)
+        bindSwitch(R.id.telemetry_switch, { AppSettings.anonymousTelemetry(this) }, ::setTelemetry)
         resumeBtn.setOnClickListener { requestOverlayPermission() }
 
         findViewById<MaterialButton>(R.id.setup_done_btn).setOnClickListener {
@@ -182,10 +192,10 @@ class SetupActivity : AppCompatActivity() {
             val profile = ProfilePrefs.get(this).shortLabel
             val send = Intent(Intent.ACTION_SEND).apply {
                 type = "application/json"
-                putExtra(Intent.EXTRA_SUBJECT, "OpenCfMoto bike tuning — $profile")
+                putExtra(Intent.EXTRA_SUBJECT, "Open Kove bike tuning — $profile")
                 putExtra(
                     Intent.EXTRA_TEXT,
-                    "OpenCfMoto bike tuning ($profile) — profile / resolution / margins / buttons " +
+                    "Open Kove bike tuning ($profile) — profile / resolution / margins / buttons " +
                         "(no passwords, no bike name/SSID).\n" +
                         "Import via Setup → Wi‑Fi & logs → Import…",
                 )
@@ -272,45 +282,43 @@ class SetupActivity : AppCompatActivity() {
         Toast.makeText(this, getString(R.string.setup_toast_hold, getString(delay.labelRes)), Toast.LENGTH_SHORT).show()
     }
 
+    private fun bindSwitch(id: Int, read: () -> Boolean, write: (Boolean) -> Unit) {
+        findViewById<MaterialSwitch>(id).setOnCheckedChangeListener { _, on ->
+            if (syncingSwitches || on == read()) return@setOnCheckedChangeListener
+            write(on)
+        }
+    }
+
     private fun setHoldsEnabled(on: Boolean) {
         ButtonTimingPrefs.setHoldsEnabled(this, on)
         refreshOptions()
-        Toast.makeText(
-            this,
-            if (on) "Hold detection on"
-            else "Hold detection off — long presses count as taps / ×2",
-            Toast.LENGTH_SHORT,
-        ).show()
     }
 
     private fun setAutoConnect(on: Boolean) {
         AppSettings.setAutoConnect(this, on)
         refreshOptions()
-        Toast.makeText(this, "Auto-connect ${if (on) "on" else "off"}", Toast.LENGTH_SHORT).show()
     }
 
     private fun setAutoRecovery(on: Boolean) {
         AppSettings.setAutoRecovery(this, on)
         refreshOptions()
-        Toast.makeText(this, "Auto-recovery ${if (on) "on" else "off"}", Toast.LENGTH_SHORT).show()
     }
 
     private fun setLogTrips(on: Boolean) {
         AppSettings.setLogTrips(this, on)
         refreshOptions()
-        Toast.makeText(this, "Trip logging ${if (on) "on" else "off"}", Toast.LENGTH_SHORT).show()
     }
 
     private fun setForceNonTouch(on: Boolean) {
         AppSettings.setForceNonTouch(this, on)
         refreshOptions()
-        toast("Disable touchscreen: ${if (on) "on" else "off"}")
+        toast(getString(R.string.setup_disable_touchscreen))
     }
 
     private fun setForceTouch(on: Boolean) {
         AppSettings.setForceTouch(this, on)
         refreshOptions()
-        toast("Force touchscreen: ${if (on) "on" else "off"}")
+        toast(getString(R.string.setup_force_touchscreen))
     }
 
     private fun setProfileOverride(ov: ProfileOverride) {
@@ -328,12 +336,7 @@ class SetupActivity : AppCompatActivity() {
     private fun setSecrets(on: Boolean) {
         AppSettings.setIncludeSecretsInLogs(this, on)
         refreshOptions()
-        Toast.makeText(
-            this,
-            if (on) "Shared logs will include secrets — turn off before posting publicly"
-            else "Log redaction on",
-            Toast.LENGTH_SHORT,
-        ).show()
+        if (on) Toast.makeText(this, getString(R.string.setup_secrets_on_desc), Toast.LENGTH_SHORT).show()
     }
 
     private fun setTelemetry(on: Boolean) {
@@ -349,7 +352,7 @@ class SetupActivity : AppCompatActivity() {
     }
 
     private fun toast(msg: String) =
-        Toast.makeText(this, "$msg (applies next connect)", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, getString(R.string.setup_applies_next_connect, msg), Toast.LENGTH_SHORT).show()
 
     /** Update every selector's description + highlight the active segment. */
     private fun refreshOptions() {
@@ -412,29 +415,11 @@ class SetupActivity : AppCompatActivity() {
             R.id.dbltap_normal to DoubleTapDelay.NORMAL,
             R.id.dbltap_slow to DoubleTapDelay.SLOW,
             R.id.dbltap_very_slow to DoubleTapDelay.VERY_SLOW)
-        highlight(holdsOn,
-            R.id.holds_on to true,
-            R.id.holds_off to false)
         highlight(hold,
             R.id.hold_short to LongPressDelay.SHORT,
             R.id.hold_normal to LongPressDelay.NORMAL,
             R.id.hold_long to LongPressDelay.LONG)
 
-        highlight(AppSettings.autoConnect(this),
-            R.id.autoconnect_on to true,
-            R.id.autoconnect_off to false)
-        highlight(AppSettings.autoRecovery(this),
-            R.id.recovery_on to true,
-            R.id.recovery_off to false)
-        highlight(AppSettings.logTrips(this),
-            R.id.logtrips_on to true,
-            R.id.logtrips_off to false)
-        highlight(AppSettings.forceNonTouch(this),
-            R.id.nontouch_on to true,
-            R.id.nontouch_off to false)
-        highlight(AppSettings.forceTouch(this),
-            R.id.forcetouch_on to true,
-            R.id.forcetouch_off to false)
         highlight(ProfilePrefs.get(this),
             R.id.profile_auto to ProfileOverride.AUTO,
             R.id.profile_legacy to ProfileOverride.LEGACY,
@@ -454,13 +439,30 @@ class SetupActivity : AppCompatActivity() {
         findViewById<android.widget.TextView>(R.id.secrets_desc).text =
             if (secrets) getString(R.string.setup_secrets_on_desc)
             else getString(R.string.setup_off_passwords_and_serials_are_redacted_recommend)
-        highlight(secrets, R.id.secrets_on to true, R.id.secrets_off to false)
         val telemetry = AppSettings.anonymousTelemetry(this)
         findViewById<android.widget.TextView>(R.id.telemetry_desc).text =
             getString(R.string.setup_anonymous_telemetry_desc)
         findViewById<android.widget.TextView>(R.id.telemetry_id).text =
             getString(R.string.setup_anonymous_id, AnonymousTelemetry.anonUuidForDisplay(this))
-        highlight(telemetry, R.id.telemetry_on to true, R.id.telemetry_off to false)
+
+        syncingSwitches = true
+        try {
+            setSwitch(R.id.holds_switch, holdsOn)
+            setSwitch(R.id.autoconnect_switch, AppSettings.autoConnect(this))
+            setSwitch(R.id.recovery_switch, AppSettings.autoRecovery(this))
+            setSwitch(R.id.logtrips_switch, AppSettings.logTrips(this))
+            setSwitch(R.id.nontouch_switch, AppSettings.forceNonTouch(this))
+            setSwitch(R.id.forcetouch_switch, AppSettings.forceTouch(this))
+            setSwitch(R.id.secrets_switch, secrets)
+            setSwitch(R.id.telemetry_switch, telemetry)
+        } finally {
+            syncingSwitches = false
+        }
+    }
+
+    private fun setSwitch(id: Int, on: Boolean) {
+        val sw = findViewById<MaterialSwitch>(id)
+        if (sw.isChecked != on) sw.isChecked = on
     }
 
     /** Refresh the Bluetooth pairing status line shown in the helper card. */
@@ -487,6 +489,34 @@ class SetupActivity : AppCompatActivity() {
         refresh()
         refreshOptions()
         refreshBluetooth()
+        if (awaitingAccessibility && AaServerStarterService.isEnabled(this)) {
+            awaitingAccessibility = false
+            runAndroidAutoSetup()
+        }
+    }
+
+    private fun openAccessibilitySettings(hint: String) {
+        try {
+            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+            Toast.makeText(this, hint, Toast.LENGTH_LONG).show()
+        } catch (_: Exception) {
+            Toast.makeText(this, getString(R.string.main_settings_failed), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun runAndroidAutoSetup() {
+        if (!SetupHelper.isAndroidAutoInstalled(this)) {
+            openAndroidAuto()
+            return
+        }
+        if (!AaServerStarterService.isEnabled(this)) {
+            awaitingAccessibility = true
+            openAccessibilitySettings(getString(R.string.aa_starter_enable_hint))
+            return
+        }
+        AaServerStarterService.request()
+        Toast.makeText(this, getString(R.string.aa_starter_running), Toast.LENGTH_LONG).show()
+        openAndroidAutoSettings()
     }
 
     private fun refresh() {
@@ -498,6 +528,18 @@ class SetupActivity : AppCompatActivity() {
         step2Title.text = tick(permsOk) + " " + getString(R.string.setup_2_permissions)
         step2Btn.text = if (permsOk) getString(R.string.setup_all_granted) else getString(R.string.setup_grant_permissions)
         step2Btn.isEnabled = !permsOk
+
+        val autoOk = AaServerStarterService.isEnabled(this)
+        step3Title.text = tick(autoOk) + " " + getString(R.string.setup_3_head_unit_mode_in_android_auto)
+        syncingSwitches = true
+        try {
+            if (step3AutoSwitch.isChecked != autoOk) step3AutoSwitch.isChecked = autoOk
+        } finally {
+            syncingSwitches = false
+        }
+        step3RunBtn.text = getString(
+            if (autoOk) R.string.aa_starter_run_now else R.string.aa_starter_button,
+        )
 
         val resumeOk = SetupHelper.canAutoResume(this)
         resumeBtn.text = if (resumeOk) getString(R.string.setup_seamless_resume_enabled)

@@ -11,11 +11,11 @@ android {
     }
 
     defaultConfig {
-        applicationId = "dev.zanderp.opencfmoto"
+        applicationId = "dev.whoismaag.openkove"
         minSdk = 29
         targetSdk = 36
-        versionCode = 36
-        versionName = "2.0.6"
+        versionCode = 37
+        versionName = "1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -31,7 +31,7 @@ android {
         // Override: -PtelemetryUrl=https://….workers.dev  or TELEMETRY_URL env / gradle.properties
         val telemetryUrl = (project.findProperty("telemetryUrl") as String?)
             ?: System.getenv("TELEMETRY_URL")
-            ?: "https://opencfmoto-telemetry.hello-3d9.workers.dev"
+            ?: ""
         buildConfigField("String", "TELEMETRY_URL", "\"$telemetryUrl\"")
     }
 

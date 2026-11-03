@@ -125,7 +125,7 @@ class ServiceDiscoveryResponse
             }.build())
 
             return Control.ServiceDiscoveryResponse.newBuilder().apply {
-                make = "OpenCfMoto"
+                make = "Open Kove"
                 model = "MotoPlay"
                 year = "2024"
                 vehicleId = "opencfmoto"

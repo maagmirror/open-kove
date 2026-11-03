@@ -75,10 +75,11 @@ object AppSettings {
         prefs(ctx).edit().putString(KEY_TRANSPORT, t.id).apply()
 
     /**
-     * Anonymous install ping + crash/error upload (random UUID only). Default **on**;
-     * rider can turn off in Setup → Privacy. See PRIVACY.md.
+     * Anonymous install ping + crash/error upload (random UUID only). Default **off** in Open Kove,
+     * and a no-op unless the build sets `TELEMETRY_URL` (see PRIVACY.md).
      */
-    fun anonymousTelemetry(ctx: Context): Boolean = prefs(ctx).getBoolean(KEY_ANON_TELEMETRY, true)
+    fun anonymousTelemetry(ctx: Context): Boolean =
+        BuildConfig.TELEMETRY_URL.isNotBlank() && prefs(ctx).getBoolean(KEY_ANON_TELEMETRY, false)
     fun setAnonymousTelemetry(ctx: Context, on: Boolean) {
         prefs(ctx).edit().putBoolean(KEY_ANON_TELEMETRY, on).apply()
         if (!on) AnonymousTelemetry.onDisabled(ctx)
