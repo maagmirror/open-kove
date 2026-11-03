@@ -40,6 +40,17 @@ android {
         buildConfigField("String", "TELEMETRY_URL", "\"$telemetryUrl\"")
     }
 
+    // Compress dex and native libs inside the APK (~60 → ~25 MB download). Android extracts the
+    // libs at install time, so the installed size grows a bit; behaviour is unchanged.
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+        dex {
+            useLegacyPackaging = true
+        }
+    }
+
     // github: full app, distributed as APK from GitHub Releases.
     // play: same app without the accessibility service and the background-kill permission.
     flavorDimensions += "dist"
