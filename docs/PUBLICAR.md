@@ -4,12 +4,17 @@ Tres canales, de más fácil a más difícil. GitHub Releases ya funciona y es e
 
 ## 1. GitHub Releases (ya está)
 
-Cada tag `v*` dispara el workflow, que compila la variante `github` y adjunta la APK a la release.
+La release sale sola al subir a `main` una versión nueva. Para publicar la 1.1.1, por ejemplo:
 
-```bash
-git tag v1.1.0
-git push origin v1.1.0
-```
+1. En `app/build.gradle.kts`, subí `versionCode` (+1) y poné `versionName = "1.1.1"`.
+2. Agregá una sección `## 1.1.1` arriba de todo en `CHANGELOG.md`. Ese texto va a ser la descripción de la release.
+3. Hacé commit y push a `main`.
+
+El workflow lee `versionName`. Si todavía no existe la release `v1.1.1`, la crea con el tag, la marca como la última y adjunta `open-kove-v1.1.1.apk`. La app avisa la actualización a partir de esa release.
+
+Si haces push a `main` sin cambiar la versión, solo se actualiza la prerelease `latest-build`, con una APK `open-kove-v1.1.0-<commit>.apk`. Sirve para probar y no le genera un aviso de actualización a nadie.
+
+Pushear un tag `v*` a mano también funciona. Si la release ya existe, el workflow solo reemplaza la APK.
 
 ## 2. IzzyOnDroid
 

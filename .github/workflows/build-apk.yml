@@ -9,11 +9,54 @@ on:
 permissions:
   contents: write
 
+# Two quick pushes must not race to create the same release.
+concurrency:
+  group: build-apk-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      # versionName in app/build.gradle.kts decides the release. A push to main whose version
+      # has no tag yet publishes release v<version>; otherwise it refreshes latest-build.
+      - name: Resolve version
+        id: ver
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version=$(sed -nE 's/^\s*versionName\s*=\s*"([^"]+)".*/\1/p' app/build.gradle.kts | head -n1)
+          if [ -z "$version" ]; then
+            echo "::error::versionName not found in app/build.gradle.kts"
+            exit 1
+          fi
+          tag="v$version"
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            tag="${GITHUB_REF_NAME}"
+            if [ "$tag" != "v$version" ]; then
+              echo "::warning::Tag $tag does not match versionName $version; the app will keep offering this release as an update."
+            fi
+            mode=release
+          elif [ "${GITHUB_REF_NAME}" = "main" ] && ! gh release view "$tag" >/dev/null 2>&1; then
+            mode=release
+          else
+            mode=latest
+          fi
+          if [ "$mode" = "release" ]; then
+            apk="open-kove-$tag.apk"
+          else
+            apk="open-kove-$tag-$(git rev-parse --short HEAD).apk"
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+          echo "apk=$apk" >> "$GITHUB_OUTPUT"
+          echo "Version $version → mode=$mode tag=$tag apk=$apk"
 
       - uses: actions/setup-java@v4
         with:
@@ -41,9 +84,7 @@ jobs:
           ./gradlew assembleGithubDebug --no-daemon
 
       - name: Rename APK
-        run: |
-          short=$(git rev-parse --short HEAD)
-          cp app/build/outputs/apk/github/debug/app-github-debug.apk "open-kove-$short.apk"
+        run: cp app/build/outputs/apk/github/debug/app-github-debug.apk "${{ steps.ver.outputs.apk }}"
 
       # Play bundle, only when the release key secrets exist. Never attached to the GitHub release.
       - name: Build Play bundle
@@ -79,13 +120,32 @@ jobs:
         if: github.event_name != 'workflow_dispatch'
         env:
           GH_TOKEN: ${{ github.token }}
+          MODE: ${{ steps.ver.outputs.mode }}
+          TAG: ${{ steps.ver.outputs.tag }}
+          VERSION: ${{ steps.ver.outputs.version }}
+          APK: ${{ steps.ver.outputs.apk }}
         run: |
-          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
-            tag="${GITHUB_REF_NAME}"
-            gh release create "$tag" open-kove-*.apk --title "Open Kove $tag" --generate-notes
+          if [ "$MODE" = "release" ]; then
+            # Notes = the "## <version>" section of CHANGELOG.md, up to the next "## ".
+            awk -v v="$VERSION" '
+              $0 ~ "^## " { if (found) exit; if ($2 == v) { found = 1; next } }
+              found { print }
+            ' CHANGELOG.md > notes.md
+            if [ ! -s notes.md ]; then
+              echo "::warning::CHANGELOG.md has no '## $VERSION' section; using generated notes."
+              echo "Open Kove $TAG." > notes.md
+            fi
+            printf '\n---\nCódigo fuente: este repositorio (AGPL-3.0).\n' >> notes.md
+            if gh release view "$TAG" >/dev/null 2>&1; then
+              # Release exists (e.g. tag pushed by hand after main built it): just refresh the APK.
+              gh release upload "$TAG" "$APK" --clobber
+            else
+              gh release create "$TAG" "$APK" --target "$GITHUB_SHA" \
+                --title "Open Kove $TAG" --notes-file notes.md --latest
+            fi
           else
             gh release delete latest-build --yes --cleanup-tag || true
-            gh release create latest-build open-kove-*.apk --prerelease \
+            gh release create latest-build "$APK" --prerelease --target "$GITHUB_SHA" \
               --title "Open Kove (última compilación)" \
-              --notes "Compilación automática de ${GITHUB_SHA}. Código fuente: este repositorio (AGPL-3.0)."
+              --notes "Compilación automática de ${GITHUB_SHA} (versión $VERSION, todavía sin release propia). Para uso normal bajá la última versión, no esta. Código fuente: este repositorio (AGPL-3.0)."
           fi
