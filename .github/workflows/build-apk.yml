@@ -81,10 +81,10 @@ jobs:
       - name: Build
         run: |
           chmod +x gradlew
-          ./gradlew assembleGithubDebug --no-daemon
+          ./gradlew assembleGithubRelease --no-daemon
 
       - name: Rename APK
-        run: cp app/build/outputs/apk/github/debug/app-github-debug.apk "${{ steps.ver.outputs.apk }}"
+        run: cp app/build/outputs/apk/github/release/app-github-release.apk "${{ steps.ver.outputs.apk }}"
 
       # Play bundle, only when the release key secrets exist. Never attached to the GitHub release.
       - name: Build Play bundle

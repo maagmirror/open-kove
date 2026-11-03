@@ -1,5 +1,11 @@
 # Cambios
 
+## 1.1.1
+
+- La APK pasa de 98 MB a unos 24 MB: trae solo las librerías para teléfonos (ARM), va comprimida y es una compilación de release en vez de debug. La app funciona igual.
+- Se actualiza encima de la 1.1.0 sin desinstalar.
+- El enlace a la lista de motos compatibles apunta a este repositorio en todos los idiomas.
+
 ## 1.1.0
 
 Esta versión cambia el nombre de paquete de la app. **Desinstalá la Open Kove anterior antes de instalar esta**: Android las ve como dos apps distintas y, si quedan las dos, la moto puede conectarse a la equivocada. La app te lo avisa al abrir.

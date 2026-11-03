@@ -14,8 +14,8 @@ android {
         applicationId = "dev.whoismaag.openkove"
         minSdk = 29
         targetSdk = 36
-        versionCode = 37
-        versionName = "1.1.0"
+        versionCode = 38
+        versionName = "1.1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -51,20 +51,6 @@ android {
         }
     }
 
-    // github: full app, distributed as APK from GitHub Releases.
-    // play: same app without the accessibility service and the background-kill permission.
-    flavorDimensions += "dist"
-    productFlavors {
-        create("github") {
-            dimension = "dist"
-            buildConfigField("boolean", "AUTO_SERVER_START", "true")
-        }
-        create("play") {
-            dimension = "dist"
-            buildConfigField("boolean", "AUTO_SERVER_START", "false")
-        }
-    }
-
     // Release key from the environment (CI secrets) or gradle.properties; absent → unsigned release.
     val releaseStore = (project.findProperty("releaseStoreFile") as String?)
         ?: System.getenv("RELEASE_STORE_FILE")
@@ -81,11 +67,29 @@ android {
         }
     }
 
+    // github: full app, distributed as APK from GitHub Releases. Its release build is signed with
+    // the same key as every earlier GitHub APK (the debug keystore CI restores from a secret), so
+    // installed copies keep updating. Only the play flavor uses the Play release key.
+    // play: same app without the accessibility service and the background-kill permission.
+    flavorDimensions += "dist"
+    productFlavors {
+        create("github") {
+            dimension = "dist"
+            buildConfigField("boolean", "AUTO_SERVER_START", "true")
+            signingConfig = signingConfigs.getByName("debug")
+        }
+        create("play") {
+            dimension = "dist"
+            buildConfigField("boolean", "AUTO_SERVER_START", "false")
+            if (releaseStoreFile != null) signingConfig = signingConfigs.getByName("release")
+        }
+    }
+
+    // No signingConfig here: a build type's would override the flavor's choice above.
     buildTypes {
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            if (releaseStoreFile != null) signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {

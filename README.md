@@ -17,7 +17,11 @@ Android Auto en el tablero de motos Kove con pantalla Carbit/EasyConn (modelo `2
 
 ## Instalación
 
-Bajá la APK desde [Releases](https://github.com/maagmirror/open-kove/releases) y seguí [la guía desde cero](docs/KOVE-SETUP.md).
+Bajá la APK desde [Releases](https://github.com/maagmirror/open-kove/releases/latest) y seguí [la guía desde cero](docs/KOVE-SETUP.md).
+
+Para recibir las actualizaciones solas, agregala en [Obtainium](https://obtainium.imranr.dev) con el enlace de este repositorio:
+
+[<img src="https://raw.githubusercontent.com/ImranR98/Obtainium/main/assets/graphics/badge_obtainium.png" alt="Obtener con Obtainium" height="54">](https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/maagmirror/open-kove)
 
 Si tenés una Open Kove anterior a la 1.1.0, desinstalala primero: desde esa versión la app tiene su propio nombre de paquete y Android la instala como una app aparte.
 
