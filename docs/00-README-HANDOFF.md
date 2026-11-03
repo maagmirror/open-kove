@@ -1,6 +1,6 @@
 # OpenCfMoto — Handoff Brief for the Implementing Agent
 
-You (the reading agent, e.g. Anthropic Fable) are taking over an in-progress reverse-engineering +
+You (the reading agent) are taking over an in-progress reverse-engineering +
 Android app project. This folder is the complete knowledge transfer. **Read all four docs before
 writing code.**
 
