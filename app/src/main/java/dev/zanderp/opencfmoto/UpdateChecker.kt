@@ -15,7 +15,7 @@ import java.net.URL
  */
 object UpdateChecker {
 
-    const val REPO = "zanderp/open-cfmoto"
+    const val REPO = "maagmirror/open-kove"
 
     private const val API = "https://api.github.com/repos/$REPO/releases/latest"
     private const val PREF = "updates"

@@ -7,19 +7,14 @@ Probado en dos motos: una con un POCO F8 Pro, Android 16 y Android Auto 17.9, y 
 
 1. **Instalá Open Kove** y aceptá todos los permisos.
 2. **Cerrá la app china.** Si tenés EasyRide (`net.easyconn.carman.easyride`), forzá su cierre o desinstalala. Ocupa los puertos que usa Open Kove, y la moto no conecta.
-3. **Activá el modo desarrollador de Android Auto:**
-   1. Abrí Open Kove → **Configuración** → paso 3, botón de Android Auto. Android Auto no tiene ícono propio.
-   2. Bajá hasta **Versión** y tocala unas 10 veces.
-   3. Aceptá el aviso.
+3. **Activá "Iniciar servidor automáticamente":** en Open Kove → **Configuración** → paso 3, prendé el interruptor. Te lleva a Accesibilidad: buscá Open Kove, activalo y volvé. Al volver, la app abre Android Auto, activa sus opciones de desarrollador y arranca el servidor sola. Ese servicio solo puede ver Android Auto. En Xiaomi puede que primero tengas que habilitar **Permitir ajustes restringidos** en la información de la app.
 4. **Xiaomi, Redmi y POCO:** en los ajustes de Open Kove, activá **Inicio automático** y poné la batería en **Sin restricciones**.
 
-## Inicio automático del servidor (recomendado)
+Si venís de una Open Kove anterior a la 1.1.0, desinstalala. Tiene otro nombre de paquete y las dos pelean por los mismos puertos.
 
-En **Configuración → paso 3 → Iniciar servidor automáticamente**, activá Open Kove en Accesibilidad. Solo puede ver Android Auto y actúa únicamente si el servidor está apagado. En Xiaomi puede que primero tengas que habilitar **Permitir ajustes restringidos** en la información de la app.
+## Sin inicio automático
 
-## Sin inicio automático, cada vez que reinicies el teléfono
-
-En Android Auto: **⋮ → Iniciar servidor de unidad principal**. Si está apagado, Open Kove te abre ese menú y te avisa.
+Si no querés usar Accesibilidad, en Android Auto tocá **Versión** unas 10 veces, aceptá el aviso y después **⋮ → Iniciar servidor de unidad principal**. Hay que repetir el último paso cada vez que reinicies el teléfono. Si el servidor está apagado, Open Kove te abre ese menú y te avisa.
 
 ## Conectar
 

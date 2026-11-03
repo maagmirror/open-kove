@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Draft + terminology pass — improve via PR: docs/TRANSLATIONS.md -->
 <resources>
-    <string name="about_copyright">© 2026 Alejandro</string>
-    <string name="about_copyright_body">Mantenido por Alexandru (zanderp). Software gratuito bajo GNU AGPL v3 o posterior: consulte LICENCIA y AVISO en el repositorio para obtener el texto completo de derechos de autor y atribución.</string>
+    <string name="about_copyright">© 2026 Maag · basada en OpenCfMoto © 2026 Alexandru</string>
+    <string name="about_copyright_body">Open Kove la mantiene Maag. Es una versión modificada de OpenCfMoto, de Alexandru (zanderp) y sus colaboradores. Software libre bajo la GNU AGPL v3 o posterior: mirá LICENSE y NOTICE en el repositorio para el texto completo de derechos de autor y atribución.</string>
     <string name="about_license_body">Puede usar, estudiar, compartir y modificar esta aplicación según la AGPL. Si redistribuye una versión modificada (incluso como servicio de red), debe ofrecer la fuente correspondiente completa bajo la misma licencia.</string>
     <string name="about_credits">Construido sobre el linaje de la comunidad open-cfmoto:\n\n• dcoletto / coletz: trabajo original de QR y EasyConn\n• BojanJ: integración del receptor Android Auto\n• richardbizik: compatibilidad con 1000 MT‑X\n• ionutradu252 / open-cflink — controles del manillar, márgenes, reconexión y pulido\n• eugen0309 — Ruta Wi‑Fi Direct/CL‑C450\n• unidad central revivida: pila de proyección automática de Android (AGPL)\n\nY todos los que probaron motos, compartieron registros y presentaron problemas.</string>
     <string name="about_disclaimer">Open Kove es un proyecto comunitario independiente. No está afiliado, respaldado ni patrocinado por Kove, Carbit, Google, Android Auto u otras marcas que otorgan licencias para tableros estilo EasyConnect (incluidos Voge, Zontes, Moto Morini, Benelli, QJ Motor, Morbidelli y Longjia). Kove, MotoPlay, EasyConn, Carbit, Android, Android Auto y marcas relacionadas son marcas comerciales de sus respectivos propietarios. Úselo bajo su propia responsabilidad: establezca su ruta antes de viajar.</string>
@@ -15,7 +15,7 @@
     <string name="supported_bikes_full">Desnudo: 125NK · 450NK · 675NK · 800NK · 800NK Avanzado · 800NK Sport · 800NK (US CRCP)\nDeporte: 300SR · 450SR · 450SR‑S · 450SR TC · 500SR VOOM · 675SR · 675SR‑R\nTouring / Adv: 450MT · 700MT · 700MT Aventura · 800MT‑X · 800MT Explorar · 800MT Explorar GT · 1000 MT‑X\nCrucero: 450CL‑C · CL‑C450\nVespa: 150SC\nATV / SSV (TFT): CFORCE 800 · CFORCE 850 Touring · CFORCE 1000 · CFORCE 1000 Touring · GOES Terrox 1000 / Gladiator G3 1000\nOtro: U10 Pro (donde el tablero ofrece el QR)</string>
     <string name="supported_bikes_unlikely_title">Normalmente no hay QR de proyección</string>
     <string name="supported_bikes_unlikely">800MT Sport · 800MT Touring · 450SR World Champion Edition · 700CL‑X (Aventura / Herencia / Deporte) · PAPIO, a menos que su unidad muestre el QR de todos modos.</string>
-    <string name="supported_bikes_footer">Lista completa en línea: github.com/zanderp/open-cfmoto → docs/SUPPORTED-BIKES.md: informa motos nuevas en Discord.</string>
+    <string name="supported_bikes_footer">Lista completa en línea: github.com/maagmirror/open-kove → docs/SUPPORTED-BIKES.md. Reportá motos nuevas en los issues de GitHub.</string>
     <string name="about_about">Acerca de</string>
     <string name="about_wireless_android_auto_for_carbit_easyconnect_das">Android Auto para motos Kove con tablero Carbit/EasyConn. Basada en OpenCfMoto, de Alexandru y los colaboradores de OpenCfMoto, modificada para Kove. Software libre bajo AGPL-3.0.</string>
     <string name="about_community_support">Comunidad y soporte</string>
@@ -23,7 +23,7 @@
     <string name="about_discord">Discordia</string>
     <string name="about_donate">Donar</string>
     <string name="about_copyright_2">Derechos de autor</string>
-    <string name="about_website_alexandru_rocks">Sitio web — alexandru.rocks</string>
+    <string name="about_website_alexandru_rocks">Sitio web — whoismaag.dev</string>
     <string name="about_source_on_github">Fuente en GitHub</string>
     <string name="about_license">Licencia</string>
     <string name="about_gnu_affero_general_public_license_v3_or_later">Licencia pública general GNU Affero v3 o posterior</string>
@@ -105,7 +105,7 @@
     <string name="gpx_metric">Métrico</string>
     <string name="gpx_imperial">Imperial</string>
     <string name="gpx_voice_prompts">Indicaciones de voz</string>
-    <string name="gpx_on">En</string>
+    <string name="gpx_on">Activado</string>
     <string name="gpx_next_stop_details">Detalles de la próxima parada</string>
     <string name="gpx_auto_finish_on_arrive">Finalización automática al llegar</string>
     <string name="gpx_dash_chrome">tablero cromado</string>
@@ -173,7 +173,7 @@
     <string name="main_search_a_place_or_address">Buscar un lugar o dirección…</string>
     <string name="main_go">Ir</string>
     <string name="main_rider_tips">Cómo conectar</string>
-    <string name="main_connect_start_android_auto_on_the_dash_becomes_s">1. En Configuración, paso 3: abrí Android Auto, tocá Versión 10 veces y activá Iniciar servidor automáticamente.\n2. Si tenés la app EasyRide, forzá su cierre.\n3. En la moto: entrá a Connection → WiFi Connection y quedate en esa pantalla. La moto solo muestra la imagen si está ahí al conectar.\n4. La primera vez: tocá Escanear y apuntá al QR. Después, al abrir la app conecta sola.\n5. Esperá entre 10 y 40 segundos. Si se corta, reconecta sola hasta que toques Detener.</string>
+    <string name="main_connect_start_android_auto_on_the_dash_becomes_s">1. En Configuración, paso 3, activá Iniciar servidor automáticamente.\n2. Si tenés la app EasyRide, forzá su cierre.\n3. En la moto: entrá a Connection → WiFi Connection y quedate en esa pantalla. La moto solo muestra la imagen si está ahí al conectar.\n4. La primera vez: tocá Escanear y apuntá al QR. Después, al abrir la app conecta sola.\n5. Esperá entre 10 y 40 segundos. Si se corta, reconecta sola hasta que toques Detener.</string>
     <string name="main_about_credits">Acerca de y créditos</string>
     <string name="main_check_for_update">Buscar actualizaciones</string>
     <string name="main_report_a_problem">Informar un problema</string>
@@ -194,8 +194,8 @@
     <string name="margins_reset_to_profile_default">Restablecer el perfil predeterminado</string>
     <string name="setup_setup_settings">Configuración</string>
     <string name="setup_a_one_time_setup_so_android_auto_can_project_to_">Configuración única para ver Android Auto en el tablero de tu Kove, además de opciones de pantalla y batería.</string>
-    <string name="setup_get_started">empezar</string>
-    <string name="setup_1_android_auto">1.Android Auto</string>
+    <string name="setup_get_started">Para empezar</string>
+    <string name="setup_1_android_auto">1. Android Auto</string>
     <string name="setup_android_auto_runs_maps_waze_opencfmoto_relays_it">Android Auto ejecuta Maps/Waze. Open Kove manda su pantalla a la moto.</string>
     <string name="setup_install_android_auto">Instalar Android Auto</string>
     <string name="setup_2_permissions">2. Permisos</string>
@@ -203,8 +203,8 @@
     <string name="setup_grant_permissions">Conceder permisos</string>
     <string name="setup_app_settings">Configuración de la aplicación</string>
     <string name="setup_3_head_unit_mode_in_android_auto">3. Servidor de unidad principal en Android Auto</string>
-    <string name="setup_in_android_auto_settings_tap_version_10_times_to">Abrí Android Auto, tocá Versión unas 10 veces y aceptá. Después tocá Iniciar servidor automáticamente y activá Open Kove en esa pantalla, así no hace falta iniciarlo a mano.</string>
-    <string name="setup_android_auto_settings">Configuración automática de Android</string>
+    <string name="setup_in_android_auto_settings_tap_version_10_times_to">Android Auto tiene que correr su servidor de unidad principal para que la moto reciba imagen. Activá el interruptor de abajo y Open Kove lo configura y lo inicia cada vez que haga falta, también después de reiniciar.</string>
+    <string name="setup_android_auto_settings">Ajustes de Android Auto</string>
     <string name="setup_screen_display">Pantalla y visualización</string>
     <string name="setup_video_quality">Calidad de vídeo</string>
     <string name="setup_balanced_recommended">Equilibrado (recomendado)</string>
@@ -368,7 +368,7 @@
     <string name="main_sent_aa">Enviado \\&quot;%1$s\\&quot; a Android Auto</string>
     <string name="main_checking_update">Buscando actualizaciones...</string>
     <string name="main_up_to_date">Estás actualizado (o desconectado)</string>
-    <string name="main_crash_title">Recuperado tras un accidente</string>
+    <string name="main_crash_title">Recuperado tras un cierre inesperado</string>
     <string name="main_mirror_ready_title">Espejo listo</string>
     <string name="main_rival_title">Otra app está ocupando la conexión con la moto</string>
     <string name="main_bike_search_hint">Búsqueda de tablero de motos: escriba aquí</string>
@@ -416,12 +416,22 @@
     <string name="setup_anonymous_telemetry_on">Activado — pings y fallos anónimos</string>
     <string name="setup_anonymous_telemetry_off">Desactivado — no se sube nada</string>
     <string name="setup_anonymous_id">Id anónimo: %1$s</string>
-    <string name="aa_start_head_unit_server">En Android Auto: tocá ⋮ → Iniciar servidor de unidad principal</string>
+    <string name="aa_start_head_unit_server">En Android Auto: tocá ⋮ → Iniciar servidor de unidad principal. O activá Iniciar servidor automáticamente en Configuración, paso 3.</string>
     <string name="aa_restart_head_unit_server">Android Auto dejó de responder. Tocá ⋮ → Detener servidor de unidad principal y volvé a iniciarlo</string>
     <string name="aa_starter_label">Open Kove: iniciar servidor de Android Auto</string>
     <string name="aa_starter_description">Inicia el servidor de unidad principal de Android Auto cuando Open Kove lo necesita. Solo puede ver Android Auto y actúa únicamente si el servidor está apagado.</string>
     <string name="aa_starter_button">Iniciar servidor automáticamente</string>
+    <string name="aa_starter_switch_desc">Usa un servicio de accesibilidad que solo puede ver Android Auto. Activa sus opciones de desarrollador e inicia el servidor de unidad principal cuando Open Kove lo necesita. En Xiaomi, Redmi y POCO puede que primero tengas que permitir ajustes restringidos en la información de la app.</string>
+    <string name="aa_starter_run_now">Configurar Android Auto ahora</string>
+    <string name="aa_starter_enable_hint">Buscá Open Kove en la lista, activalo y volvé.</string>
+    <string name="aa_starter_disable_hint">Buscá Open Kove en la lista y desactivalo.</string>
+    <string name="aa_starter_running">Configurando Android Auto… no toques la pantalla unos segundos.</string>
+    <string name="setup_applies_next_connect">%1$s (se aplica en la próxima conexión)</string>
     <string name="main_kove_screen_hint">Al prender la moto, entrá a Connection → WiFi Connection antes de 30 segundos. ¿Sin imagen? Abrí esa pantalla y tocá Detener y Conectar.</string>
     <string name="about_kove_author_title">Open Kove, por Maag</string>
     <string name="about_kove_author_body">Adaptada para motos Kove por Maag, basada en OpenCfMoto. Es software libre: podés usarla, estudiarla, compartirla y modificarla bajo la AGPL-3.0. Si distribuís una versión modificada, tenés que ofrecer su código fuente bajo la misma licencia.</string>
+    <string name="legacy_install_title">Versión vieja todavía instalada</string>
+    <string name="legacy_install_body">Este teléfono todavía tiene una Open Kove anterior (u OpenCfMoto) con el nombre de paquete viejo. Las dos usan los mismos puertos, así que la moto puede conectarse a la equivocada. Desinstalá la vieja y quedate con esta.</string>
+    <string name="legacy_install_uninstall">Desinstalar la vieja</string>
+    <string name="legacy_install_later">Después</string>
 </resources>

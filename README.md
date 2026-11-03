@@ -19,7 +19,9 @@ Android Auto en el tablero de motos Kove con pantalla Carbit/EasyConn (modelo `2
 
 Bajá la APK desde [Releases](https://github.com/maagmirror/open-kove/releases) y seguí [la guía desde cero](docs/KOVE-SETUP.md).
 
-Android Auto exige un paso manual: activar su modo desarrollador e iniciar el **servidor de unidad principal**. Hay que volver a iniciarlo cuando reinicies el teléfono.
+Si tenés una Open Kove anterior a la 1.1.0, desinstalala primero: desde esa versión la app tiene su propio nombre de paquete y Android la instala como una app aparte.
+
+Android Auto tiene que correr su **servidor de unidad principal**. Con **Iniciar servidor automáticamente** activado en Configuración, Open Kove lo deja configurado y lo arranca sola cada vez que hace falta, también después de reiniciar el teléfono. Si preferís hacerlo a mano: en Android Auto, tocá Versión diez veces y después **⋮ → Iniciar servidor de unidad principal**.
 
 Si tenés la app EasyRide instalada, cerrala antes: ocupa los mismos puertos.
 
@@ -43,6 +45,6 @@ La APK queda en `app/build/outputs/apk/debug/app-debug.apk`. El workflow [`build
 
 Open Kove es obra de [Maag](https://whoismaag.dev), y es una versión modificada de [OpenCfMoto](https://github.com/zanderp/open-cfmoto), de Alexandru y los colaboradores de OpenCfMoto. Su receptor de Android Auto deriva de [headunit-revived](https://github.com/andreknieriem/headunit-revived).
 
-Se distribuye bajo la [GNU AGPL v3 o posterior](LICENSE). Si distribuís una versión modificada, tenés que ofrecer su código fuente bajo la misma licencia. Autores y componentes de terceros en [NOTICE](NOTICE).
+Se distribuye bajo la [GNU AGPL v3 o posterior](LICENSE). Privacidad y permisos: [PRIVACY.md](PRIVACY.md). Cambios por versión: [CHANGELOG.md](CHANGELOG.md). Si distribuís una versión modificada, tenés que ofrecer su código fuente bajo la misma licencia. Autores y componentes de terceros en [NOTICE](NOTICE).
 
 Open Kove es un proyecto independiente y no tiene relación con Kove, Carbit, CFMOTO ni Google. Kove, Android Auto y las demás marcas pertenecen a sus dueños. Usala bajo tu responsabilidad y configurá la ruta antes de salir.

@@ -68,7 +68,7 @@ class MainActivity : AppCompatActivity() {
             log(
                 "!! denied: ${denied.joinToString { it.substringAfterLast('.') }} — this dash can " +
                     "ONLY be reached over Bluetooth. If Android stopped asking, grant them in " +
-                    "Settings ▸ Apps ▸ OpenCfMoto ▸ Permissions, then tap Connect again.",
+                    "Settings ▸ Apps ▸ Open Kove ▸ Permissions, then tap Connect again.",
             )
             ConnectionState.set(Phase.ERROR, "Bluetooth/location permission denied")
             return@registerForActivityResult
@@ -351,7 +351,7 @@ class MainActivity : AppCompatActivity() {
             androidx.appcompat.app.AlertDialog.Builder(this)
                 .setTitle(R.string.main_crash_title)
                 .setMessage(
-                    "OpenCfMoto closed unexpectedly last time. The log and crash report were saved — " +
+                    "Open Kove closed unexpectedly last time. The log and crash report were saved — " +
                         "open Logs and tap Share Logs so we can see what happened.",
                 )
                 .setPositiveButton("Share Logs") { _, _ -> shareLog() }
@@ -394,7 +394,7 @@ class MainActivity : AppCompatActivity() {
                                     "Single app — that app must stay on screen; Android sends no frames " +
                                     "in the background. Prefer GPX / Tracks or Android Auto for pocket use.\n\n" +
                                     "Bike touch does not drive mirrored apps. Continue connects and " +
-                                    "sends OpenCfMoto to the background.",
+                                    "sends Open Kove to the background.",
                             )
                             .setPositiveButton("Continue") { _, _ -> startMirrorLink() }
                             .setCancelable(false)
@@ -678,6 +678,7 @@ class MainActivity : AppCompatActivity() {
 
         // First launch: walk the user through the one-time prerequisites.
         try {
+            LegacyInstall.maybeWarn(this)
             if (!SetupActivity.hasSeen(this)) SetupActivity.start(this)
             else maybeAutoConnect()
             maybeResumeFromParked(intent)
