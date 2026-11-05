@@ -23,6 +23,7 @@ object AppSettings {
     private const val KEY_AUTO_CONNECT = "auto_connect"
     private const val KEY_AUTO_RECOVERY = "auto_recovery"
     private const val KEY_LOG_TRIPS = "log_trips"
+    private const val KEY_KOVE_SCREEN_ON = "kove_keep_screen_on"
     private const val KEY_FORCE_NON_TOUCH = "force_non_touch"
     private const val KEY_FORCE_TOUCH = "force_touch"
     private const val KEY_INCLUDE_SECRETS = "include_secrets_in_logs"
@@ -39,6 +40,15 @@ object AppSettings {
     fun autoRecovery(ctx: Context): Boolean = prefs(ctx).getBoolean(KEY_AUTO_RECOVERY, true)
     fun setAutoRecovery(ctx: Context, on: Boolean) =
         prefs(ctx).edit().putBoolean(KEY_AUTO_RECOVERY, on).apply()
+
+    /**
+     * Kove: hold the phone screen on (dimmed) for the whole session. Off by default: the screen is
+     * the biggest battery drain, and a locked phone kept streaming in testing. Turn it on only if the
+     * link drops whenever the phone locks.
+     */
+    fun koveKeepScreenOn(ctx: Context): Boolean = prefs(ctx).getBoolean(KEY_KOVE_SCREEN_ON, false)
+    fun setKoveKeepScreenOn(ctx: Context, on: Boolean) =
+        prefs(ctx).edit().putBoolean(KEY_KOVE_SCREEN_ON, on).apply()
 
     fun logTrips(ctx: Context): Boolean = prefs(ctx).getBoolean(KEY_LOG_TRIPS, true)
     fun setLogTrips(ctx: Context, on: Boolean) =

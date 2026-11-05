@@ -72,6 +72,12 @@ class BleNetLink(
      * only after the build-net request; we now do the same.
      */
     private val onApNeeded: () -> Unit = {},
+    /**
+     * Waiting for a dash that has been gone a while: scan at a lower duty cycle and, if the dash is
+     * not seen advertising, fail fast instead of dialling its address blind (a direct GATT connect
+     * keeps the radio busy for up to 30s per try). The caller retries later.
+     */
+    private val lowPower: Boolean = false,
 ) {
 
     companion object {
@@ -191,7 +197,7 @@ class BleNetLink(
         // this scan exists to avoid. Matching the address ourselves side-steps it.
         try {
             val settings = ScanSettings.Builder()
-                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+                .setScanMode(if (lowPower) ScanSettings.SCAN_MODE_BALANCED else ScanSettings.SCAN_MODE_LOW_LATENCY)
                 .build()
             // Android returns nothing from an unfiltered scan while the screen is off, and the locked
             // phone is exactly when a reconnect has to find the dash. The filters only narrow the
@@ -206,7 +212,10 @@ class BleNetLink(
             return
         }
         handler.postDelayed({
-            if (!done && device == null) {
+            if (!done && device == null && lowPower) {
+                stopScan()
+                fail("dash not seen advertising in ${SCAN_MS / 1000}s (low-power wait)")
+            } else if (!done && device == null) {
                 log("[blenet] dash not seen advertising in ${SCAN_MS / 1000}s — connecting by address")
                 stopScan()
                 connectByAddress()

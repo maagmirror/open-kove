@@ -31,6 +31,12 @@ object KoveLink {
     private const val RETRY_STEP_MS = 3_000L
     private const val RETRY_MAX_MS = 15_000L
     private const val WAKE_LOCK_MS = 12 * 60 * 60 * 1000L
+    /** Dash gone this long (bike switched off, rider walked away): stop chasing it at full power. */
+    private const val IDLE_AFTER_MS = 120_000L
+    private const val IDLE_RETRY_MS = 30_000L
+    /** While idle, every Nth attempt still dials the dash's address in case it is not advertising. */
+    private const val IDLE_FULL_EVERY = 4
+    private const val HINT_MS = 60_000L
 
     private val handler = Handler(Looper.getMainLooper())
     private var app: Context? = null
@@ -45,6 +51,12 @@ object KoveLink {
     /** True once the dash has joined, so the group going away afterwards means a lost link. */
     @Volatile private var established = false
     @Volatile private var noStreamSince = 0L
+    /** When the current outage began; 0 while the link is up. */
+    @Volatile private var lostSince = 0L
+    /** Low-power wait: Wi-Fi locks and screen released, slow BLE retries. Android Auto stays up. */
+    @Volatile var idle = false
+        private set
+    @Volatile private var hintShown = false
     private var attempts = 0
 
     fun arm(context: Context, bleMac: String) {
@@ -54,7 +66,7 @@ object KoveLink {
         mac = bleMac
         armed = true
         registerGroupWatch(ctx)
-        acquireScreen(ctx)
+        if (AppSettings.koveKeepScreenOn(ctx)) acquireScreen(ctx)
         LogBus.log("[kove] link supervisor armed")
     }
 
@@ -74,6 +86,9 @@ object KoveLink {
         recovering = false
         established = false
         noStreamSince = 0L
+        lostSince = 0L
+        idle = false
+        hintShown = false
         attempts = 0
         handler.removeCallbacksAndMessages(null)
         try { link?.stop() } catch (_: Exception) {}
@@ -81,8 +96,7 @@ object KoveLink {
         val ctx = app
         receiver?.let { r -> try { ctx?.unregisterReceiver(r) } catch (_: Exception) {} }
         receiver = null
-        try { if (screenLock?.isHeld == true) screenLock?.release() } catch (_: Exception) {}
-        screenLock = null
+        releaseScreen()
     }
 
     /**
@@ -107,6 +121,7 @@ object KoveLink {
         }
         if (prober.isStreaming) {
             noStreamSince = 0L
+            if (hintShown) clearHint()
             if (prober.msSinceLastFrame() > STALL_MS) onLinkLost("no frame pulled for ${STALL_MS / 1000}s")
             return
         }
@@ -114,6 +129,7 @@ object KoveLink {
         if (noStreamSince == 0L) {
             noStreamSince = now
         } else if (now - noStreamSince > NO_STREAM_MS) {
+            showWifiConnectionHint()
             onLinkLost("dash did not start streaming within ${NO_STREAM_MS / 1000}s")
         }
     }
@@ -124,6 +140,7 @@ object KoveLink {
         established = false
         noStreamSince = 0L
         attempts = 0
+        if (lostSince == 0L) lostSince = SystemClock.elapsedRealtime()
         LogBus.log("[kove] link lost ($why) — rebuilding network and session")
         handler.post { rebuild() }
     }
@@ -143,7 +160,9 @@ object KoveLink {
         val address = mac ?: return
         if (!armed) return
         attempts++
-        LogBus.log("[kove] reconnect attempt $attempts")
+        if (!idle && lostSince > 0 && SystemClock.elapsedRealtime() - lostSince > IDLE_AFTER_MS) enterIdle(ctx)
+        val lowPower = idle && attempts % IDLE_FULL_EVERY != 0
+        LogBus.log("[kove] reconnect attempt $attempts${if (lowPower) " (low power)" else ""}")
         lateinit var next: BleNetLink
         next = BleNetLink(
             context = ctx,
@@ -161,6 +180,11 @@ object KoveLink {
                     recovering = false
                     established = true
                     attempts = 0
+                    lostSince = 0L
+                    if (idle) exitIdle(ctx)
+                    // The dash only shows a session started on Connection → WiFi Connection, and a
+                    // bike that was just switched on is usually still on its home screen.
+                    showWifiConnectionHint()
                     LogBus.log("[kove] dash is back at ${car.hostAddress} — restarting PXC")
                     ConnectionState.set(Phase.PXC_CONNECTING)
                     try {
@@ -193,6 +217,7 @@ object KoveLink {
                     },
                 )
             },
+            lowPower = lowPower,
         )
         link = next
         next.start()
@@ -203,8 +228,48 @@ object KoveLink {
         try { link?.stop() } catch (_: Exception) {}
         link = null
         PhoneHotspot.stop(LogBus::log)
-        val delay = (RETRY_STEP_MS * attempts).coerceAtMost(RETRY_MAX_MS)
+        val delay = if (idle) IDLE_RETRY_MS else (RETRY_STEP_MS * attempts).coerceAtMost(RETRY_MAX_MS)
         handler.postDelayed({ startLink() }, delay)
+    }
+
+    /**
+     * The dash is not coming back soon. Keep Android Auto running (so the bike can rejoin without a
+     * new QR scan or head unit restart) but let the screen and Wi-Fi radio rest, and slow the BLE
+     * search down.
+     */
+    private fun enterIdle(ctx: Context) {
+        idle = true
+        LogBus.log("[kove] dash gone > ${IDLE_AFTER_MS / 1000}s — low-power wait, retrying every ${IDLE_RETRY_MS / 1000}s")
+        releaseScreen()
+        ConnectionState.set(Phase.RECONNECTING, ctx.getString(R.string.kove_waiting_detail))
+        AndroidAutoService.setKoveIdle(true)
+    }
+
+    private fun exitIdle(ctx: Context) {
+        idle = false
+        LogBus.log("[kove] dash is back — leaving low-power wait")
+        if (AppSettings.koveKeepScreenOn(ctx)) acquireScreen(ctx)
+        AndroidAutoService.setKoveIdle(false)
+    }
+
+    private fun showWifiConnectionHint() {
+        val ctx = app ?: return
+        hintShown = true
+        AndroidAutoService.showKoveNotice(
+            ctx.getString(R.string.notif_kove_no_picture_title),
+            ctx.getString(R.string.notif_kove_no_picture_text),
+        )
+        handler.postDelayed({ if (hintShown) clearHint() }, HINT_MS)
+    }
+
+    private fun clearHint() {
+        val ctx = app ?: return
+        hintShown = false
+        if (idle) return
+        AndroidAutoService.showKoveNotice(
+            ctx.getString(R.string.notif_aa_title),
+            ctx.getString(R.string.notif_aa_receiving),
+        )
     }
 
     private fun registerGroupWatch(ctx: Context) {
@@ -237,5 +302,10 @@ object KoveLink {
         } catch (e: Exception) {
             LogBus.log("[kove] screen wake lock failed: $e")
         }
+    }
+
+    private fun releaseScreen() {
+        try { if (screenLock?.isHeld == true) screenLock?.release() } catch (_: Exception) {}
+        screenLock = null
     }
 }

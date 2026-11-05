@@ -483,6 +483,13 @@
     <string name="conn_streaming">Connected — projecting to dash</string>
     <string name="conn_mirroring">Mirroring screen to dash</string>
     <string name="conn_reconnecting">Link dropped — reconnecting…</string>
+    <string name="setup_kove_keep_screen_on">Keep the screen on while connected</string>
+    <string name="setup_kove_keep_screen_on_desc">Kove only. Off saves the most battery. Turn it on only if the link drops every time the phone locks.</string>
+    <string name="kove_waiting_detail">dash off — saving battery</string>
+    <string name="notif_kove_waiting_title">Waiting for the bike</string>
+    <string name="notif_kove_waiting_text">Saving battery — reconnects on its own when the dash is back</string>
+    <string name="notif_kove_no_picture_title">No picture on the dash?</string>
+    <string name="notif_kove_no_picture_text">On the dash, open Connection → WiFi Connection. No need to scan the QR again.</string>
     <string name="conn_waiting_for_bike">Bike out of range — waiting…</string>
     <string name="conn_stopped">Stopped</string>
     <string name="conn_error">Error — see logs</string>

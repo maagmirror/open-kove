@@ -1129,6 +1129,39 @@
                     android:text="@string/setup_if_the_dash_drops_or_projection_stalls_reconnect"
                     android:textColor="@color/text_secondary"
                     android:textSize="13sp" />
+                <!-- Kove: keep screen on -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/setup_kove_keep_screen_on"
+                        android:textColor="@color/text_primary"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/kove_screen_switch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:minHeight="48dp" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="6dp"
+                    android:text="@string/setup_kove_keep_screen_on_desc"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="13sp" />
 
                 <!-- Log trips -->
                 <LinearLayout

@@ -387,6 +387,17 @@ class AndroidAutoService : Service() {
         } catch (_: Exception) {}
     }
 
+    private fun applyKoveIdle(on: Boolean) {
+        if (!isRunning) return
+        if (on) {
+            releaseWifiLocks()
+            updateNotification(getString(R.string.notif_kove_waiting_title), getString(R.string.notif_kove_waiting_text))
+        } else {
+            acquireWifiLocks()
+            updateNotification(getString(R.string.notif_aa_title), getString(R.string.notif_aa_reconnecting))
+        }
+    }
+
     private fun releaseWifiLocks() {
         try { if (wifiLockLowLatency?.isHeld == true) wifiLockLowLatency?.release() } catch (_: Exception) {}
         try { if (wifiLockHighPerf?.isHeld == true) wifiLockHighPerf?.release() } catch (_: Exception) {}
@@ -706,6 +717,21 @@ class AndroidAutoService : Service() {
 
         fun updateForegroundType() {
             active?.updateForegroundType()
+        }
+
+        /**
+         * Kove low-power wait ([KoveLink.idle]): the dash has been gone a while, so let the Wi-Fi
+         * radio back into power save. Android Auto and the CPU lock stay up so the bike can rejoin
+         * without a new QR scan.
+         */
+        fun setKoveIdle(on: Boolean) {
+            val svc = active ?: return
+            svc.watchdogHandler.post { svc.applyKoveIdle(on) }
+        }
+
+        fun showKoveNotice(title: String, text: String) {
+            val svc = active ?: return
+            svc.watchdogHandler.post { svc.updateNotification(title, text) }
         }
 
         /**

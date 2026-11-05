@@ -348,6 +348,13 @@
     <string name="conn_streaming">Conectado: proyectando al tablero</string>
     <string name="conn_mirroring">Duplicar pantalla para tablero</string>
     <string name="conn_reconnecting">Enlace caído - reconectando...</string>
+    <string name="setup_kove_keep_screen_on">Mantener la pantalla encendida mientras está conectada</string>
+    <string name="setup_kove_keep_screen_on_desc">Solo Kove. Apagado ahorra más batería. Activalo solo si el enlace se corta cada vez que se bloquea el teléfono.</string>
+    <string name="kove_waiting_detail">tablero apagado — ahorrando batería</string>
+    <string name="notif_kove_waiting_title">Esperando la moto</string>
+    <string name="notif_kove_waiting_text">Ahorrando batería — reconecta sola cuando vuelva el tablero</string>
+    <string name="notif_kove_no_picture_title">¿No hay imagen en el tablero?</string>
+    <string name="notif_kove_no_picture_text">En el tablero, abrí Connection → WiFi Connection. No hace falta escanear el QR de nuevo.</string>
     <string name="conn_waiting_for_bike">Moto fuera de alcance - esperando...</string>
     <string name="conn_stopped">Interrumpido</string>
     <string name="conn_error">Error: ver registros</string>

@@ -1,5 +1,13 @@
 # Cambios
 
+## 1.2.0
+
+- Mucho menos consumo de batería en las Kove:
+  - La pantalla del teléfono ya no queda encendida durante toda la conexión. Si en tu teléfono el enlace se corta cada vez que se bloquea, activá **Mantener la pantalla encendida mientras está conectada** en Configuración.
+  - Con la moto apagada, después de 2 minutos sin tablero la app pasa a un modo de bajo consumo: apaga la pantalla, deja descansar el Wi‑Fi y busca el tablero por Bluetooth cada 30 segundos en vez de sin parar. La notificación muestra "Esperando la moto".
+- Al volver a prender la moto, reconecta sola sin escanear el QR de nuevo.
+- Si el tablero se conecta pero no muestra imagen, la notificación avisa que hay que abrir **Connection → WiFi Connection** en el tablero. Escanear el QR no hace falta: antes "funcionaba" solo porque para escanear hay que estar en esa pantalla.
+
 ## 1.1.3
 
 - Arregla el error "Se produjo un problema al analizar el paquete" que impedía instalar la 1.1.1 y la 1.1.2 en algunos teléfonos. La APK vuelve a guardar el código y las librerías sin comprimir, así que pesa unos 55 MB.
